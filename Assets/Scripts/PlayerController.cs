@@ -1,116 +1,34 @@
-﻿using DG.Tweening;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class PlayerController : UserData
 {
-    public CharacterMoveController moveButton;
     //public BloodController bloodController;
-    public CharacterStatus characterStatus = CharacterStatus.idling;
     public Scoring scoring;
     public string answer = string.Empty;
     public bool IsCorrect = false;
     public bool IsTriggerToNextQuestion = false;
     public bool IsCheckedAnswer = false;
-    public CanvasGroup answerBoxCg;
     public Image answerBoxFrame;
     public float speed;
-    [HideInInspector]
-    public Transform characterTransform;
-    [HideInInspector]
-    public Canvas characterCanvas = null;
-    public Vector3 startPosition = Vector3.zero;
-    public int characterOrder = 11;
     private CharacterAnimation characterAnimation = null;
     private TextMeshProUGUI answerBox = null;
-    public List<Cell> collectedCell = new List<Cell>();
+    public List<Card> flickedCard = new List<Card>();
     public float countGetAnswerAtStartPoints = 2f;
     private float countAtStartPoints = 0f;
 
-    public RectTransform rectTransform = null;
-    public float rotationSpeed = 200f; // Speed of rotation
-    public float moveSpeed = 5f; // Speed of movement
-    private Rigidbody2D rb = null;
-   // public bool isRotating = true;
-    public Vector3 playerCurrentPosition = Vector3.zero;
-    private float randomDirection;
-    private Vector2 moveDirection;
-    public float reduceBaseFactor = 0.93f;
-    private float reducedFactor = 0f;
-    public CanvasGroup bornParticle;
-    public GameObject playerAppearEffect;
-    public GameObject[] answerParticles;
 
-    public void Init(CharacterSet characterSet = null, Sprite[] defaultAnswerBoxes = null, Vector3 startPos = default)
+
+    public void Init(CharacterSet characterSet = null)
     {
-        if(LoaderConfig.Instance.gameSetup.playersMovingSpeed > 0f)
-        {
-            this.moveSpeed = LoaderConfig.Instance.gameSetup.playersMovingSpeed;
-        }
-
-        if(LoaderConfig.Instance.gameSetup.playersRotationSpeed > 0f)
-        {
-            this.rotationSpeed = LoaderConfig.Instance.gameSetup.playersRotationSpeed;
-        }
-
-        for (int i=0; i < this.answerParticles.Length; i++)
-        {
-            if(this.answerParticles[i] != null)
-            {
-                if(i == this.UserId)
-                {
-                    this.answerParticles[i].SetActive(true);
-                }
-                else
-                {
-                    this.answerParticles[i].SetActive(false);
-                }
-            }
-        }
-        this.GetComponent<CircleCollider2D>().enabled = true;
-        SetUI.Set(this.bornParticle, true, 1f);
-        this.transform.DOScale(1f, 1f).OnComplete(()=>
-        {
-            this.playerAppearEffect.SetActive(false);
-            SetUI.Set(this.bornParticle, false, 1f);
-        });
-        this.rb = GetComponent<Rigidbody2D>();
-        this.SetRandomRotationDirection();
-
         this.countAtStartPoints = this.countGetAnswerAtStartPoints;
         this.updateRetryTimes(false);
-        this.startPosition = startPos;
-        this.characterTransform = this.transform;
-        this.characterTransform.localPosition = this.startPosition;
-        this.characterCanvas = this.GetComponent<Canvas>();
-        this.characterCanvas.sortingOrder = this.characterOrder;
         this.characterAnimation = this.GetComponent<CharacterAnimation>();
         this.characterAnimation.characterSet = characterSet;
-
-        if(this.answerBoxCg != null ) {
-            this.answerBoxCg.transform.localScale = Vector3.zero;
-            if (this.UserId < 2)
-            {
-                this.answerBoxCg.transform.localPosition = new Vector2(60f, -60f);
-            }
-            else
-            {
-                this.answerBoxCg.transform.localPosition = new Vector2(-60f, 60f);
-            }
-            SetUI.SetScale(this.answerBoxCg, false);
-            this.answerBox = this.answerBoxCg.GetComponentInChildren<TextMeshProUGUI>();
-        }
-
-        if (this.moveButton == null)
-        {
-            this.moveButton = GameObject.FindGameObjectWithTag("P" + this.RealUserId + "-controller").GetComponent<CharacterMoveController>();
-            this.moveButton.OnPointerClickEvent += this.StopRotation;
-        }
 
         /*if (this.bloodController == null)
         {
@@ -127,10 +45,10 @@ public class PlayerController : UserData
             this.scoring.scoreTxt = GameObject.FindGameObjectWithTag("P" + this.RealUserId + "_Score").GetComponent<TextMeshProUGUI>();
         }
 
-        if (this.scoring.answeredEffectTxt == null)
+        /*if (this.scoring.answeredEffectTxt == null)
         {
             this.scoring.answeredEffectTxt = GameObject.FindGameObjectWithTag("P" + this.RealUserId + "_AnswerScore").GetComponent<TextMeshProUGUI>();
-        }
+        }*/
 
         if (this.scoring.resultScoreTxt == null)
         {
@@ -138,8 +56,6 @@ public class PlayerController : UserData
         }
 
         this.scoring.init();
-        this.characterStatus = CharacterStatus.rotating;
-        this.reducedFactor = this.reduceBaseFactor;
     }
 
     void updateRetryTimes(bool deduct = false)
@@ -171,7 +87,6 @@ public class PlayerController : UserData
             {
                 this.PlayerColor = this.characterAnimation.characterSet.playerColor;
                 this.PlayerIcons[i].playerColor = this.characterAnimation.characterSet.playerColor;
-                //this.joystick.handle.GetComponent<Image>().color = _color;
                 this.PlayerIcons[i].SetStatus(_status, _playerName, _icon);
             }
         }
@@ -320,102 +235,13 @@ public class PlayerController : UserData
         onCompleted?.Invoke();
     }
 
-    public void characterReset(Vector3 newStartPostion)
-    {
-        this.randomDirection = UnityEngine.Random.Range(0, 2) == 0 ? 1f : -1f;
-        this.startPosition = newStartPostion;
-        this.characterCanvas.sortingOrder = this.characterOrder;
-        this.characterTransform.localPosition = this.startPosition;
-        this.collectedCell.Clear();
-    }
-
-    void FixedUpdate()
-    {
-        if(this.rectTransform != null)
-        {
-            switch (this.characterStatus)
-            {
-                case CharacterStatus.idling:
-                    this.rb.velocity = Vector2.zero;
-                    this.rb.angularVelocity = 0f;
-                    this.StopResetCoroutine();
-                    this.moveButton.TriggerActive(false);
-                    return;
-                case CharacterStatus.rotating:
-                    Vector3 direction = Vector3.forward * rotationSpeed * Time.deltaTime * this.randomDirection;
-                    this.rectTransform.Rotate(direction);
-                    break;
-                case CharacterStatus.moving:
-                    this.MoveForward();
-                    break;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && this.UserId == 0)
-            {
-                this.characterStatus = CharacterStatus.moving;
-                this.moveDirection = this.rectTransform.up;
-            }
-
-            bool isMoving = this.rb.velocity.sqrMagnitude > 0.05f;
-            this.moveButton.TriggerActive(isMoving ? false : true);
-
-            if (isMoving)
-            {
-                this.rb.velocity *= this.reducedFactor;
-            }
-            else
-            {
-                this.reducedFactor = this.reduceBaseFactor;
-                this.rb.velocity = Vector3.zero;
-            }
-        }
-    }
-
-    void SetRandomRotationDirection()
-    {
-        if(this.rectTransform == null) this.rectTransform = this.GetComponent<RectTransform>();
-        this.rb = GetComponent<Rigidbody2D>();
-        this.rb.gravityScale = 0;
-        this.randomDirection =  UnityEngine.Random.Range(0, 2) == 0 ? 1f : -1f;
-    }
-
-    public void StopRotation(BaseEventData data)
-    {
-        if(this.characterStatus == CharacterStatus.rotating)
-        {
-            AudioController.Instance?.PlayAudio(0);
-            this.playerCurrentPosition = this.transform.localPosition;
-            this.moveDirection = this.rectTransform.up;
-            this.characterStatus = CharacterStatus.moving;
-        }
-    }
-
-    void MoveForward()
-    {
-        this.rb.velocity = this.moveDirection * this.moveSpeed;
-        this.rb.angularVelocity = 0f;
-        //this.FaceDirection(this.moveDirection);
-    }
-
-    public void playerReset(Vector3 newStartPostion)
-    {
-        SetUI.Set(this.bornParticle, true, 1f);
-        this.transform.DOScale(0f, 0f);
-        if(this.playerAppearEffect != null) this.playerAppearEffect.SetActive(true);
-        this.GetComponent<CircleCollider2D>().enabled = true;
-
-        this.transform.DOScale(1f, 1f).OnComplete(() =>
-        {
-            this.playerAppearEffect.SetActive(false);
-            SetUI.Set(this.bornParticle, false, 1f);
-        });
+   
+    public void playerReset()
+    {     
         this.deductAnswer();
         this.setAnswer("");
-        this.characterReset(newStartPostion);
         this.IsCheckedAnswer = false;
         this.IsCorrect = false;
-        this.StopCharacter();
-        this.characterStatus = CharacterStatus.rotating;
     }
 
     public void setAnswer(string content)
@@ -423,29 +249,16 @@ public class PlayerController : UserData
         if (string.IsNullOrEmpty(content))
         {
             this.answer = "";
-            SetUI.SetScale(this.answerBoxCg, false);
         }
         else
         {
-            var gridManager = GameController.Instance.gridManager;
-            if (gridManager.isMCType) { 
-                this.answer = content;
-            }
-            else
-            {
-                this.answer += content;
-            }
-            float endValue = this.UserId < 2 ? 1f : -1f;
-            SetUI.SetScale(this.answerBoxCg, true, endValue, 0.5f, Ease.OutElastic);
+            this.answer = content;
         }
-
-        if(this.answerBox != null)
-            this.answerBox.text = this.answer;
     }
 
     public void autoDeductAnswer()
     {
-        if(this.collectedCell.Count > 0) {
+        if(this.flickedCard.Count > 0) {
             if (this.countAtStartPoints > 0f)
             {
                 this.countAtStartPoints -= Time.deltaTime;
@@ -464,157 +277,10 @@ public class PlayerController : UserData
 
     public void deductAnswer()
     {
-       var gridManager = GameController.Instance.gridManager;
         if (this.answer.Length > 0)
         {
-            string deductedChar;
-            if (gridManager.isMCType)
-            {
-                deductedChar = this.answer;
-                this.setAnswer("");
-            }
-            else
-            {
-                deductedChar = this.answer[this.answer.Length - 1].ToString();
-                this.answer = this.answer.Substring(0, this.answer.Length - 1);
-                if (this.answerBox != null)
-                    this.answerBox.text = this.answer;
-
-                if (this.answer.Length == 0)
-                {
-                    SetUI.SetScale(this.answerBoxCg, false);
-                }
-            }
-
-            if (this.collectedCell.Count > 0)
-            {
-                var latestCell= this.collectedCell[this.collectedCell.Count - 1];
-                latestCell.SetTextStatus(true);
-                this.collectedCell.RemoveAt(this.collectedCell.Count - 1);
-            }
+            this.setAnswer("");
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // Check if the other collider has a specific tag, e.g., "Player"
-        if (other.CompareTag("Word"))
-        {
-            var cell = other.GetComponent<Cell>();
-            if (cell != null)
-            {
-                cell.setCellEnterColor(true, GameController.Instance.showCells);
-                if (cell.isSelected && this.Retry > 0)
-                {
-                    //LogController.Instance.debug("Player has entered the trigger!" + other.name);
-                    AudioController.Instance?.PlayAudio(9);
-
-                    var gridManager = GameController.Instance.gridManager;
-                    if (gridManager.isMCType){
-                        if (this.collectedCell.Count > 0)
-                        {
-                            var latestCell = this.collectedCell[this.collectedCell.Count - 1];
-                            latestCell.SetTextStatus(true);
-                            this.collectedCell.RemoveAt(this.collectedCell.Count - 1);
-                        }
-                    }
-                    this.characterStatus = CharacterStatus.getWord;
-                    this.setAnswer(cell.content.text);
-                    this.collectedCell.Add(cell);
-                    cell.SetTextStatus(false);
-                    this.StopCharacter();
-                    var gameTimer = GameController.Instance.gameTimer;
-                    int currentTime = Mathf.FloorToInt(((gameTimer.gameDuration - gameTimer.currentTime) / gameTimer.gameDuration) * 100);
-                    this.checkAnswer(currentTime);
-                }
-            }
-        }
-        else if (other.CompareTag("Wall"))
-        {
-            SetUI.SetScale(this.answerBoxCg, false);
-            AudioController.Instance?.PlayAudio(11, false, 0.5f);
-            this.deductAnswer();
-            this.resetCoroutine = StartCoroutine(this.delayResetCharacter());
-        }
-    }
-
-    void StopCharacter()
-    {
-        this.rb.velocity = Vector2.zero;
-        this.rb.angularVelocity = 0f;
-        this.characterStatus = CharacterStatus.rotating;
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Word"))
-        {
-            var cell = other.GetComponent<Cell>();
-            if (cell != null)
-            {
-                cell.setCellEnterColor(false);
-                if (cell.isSelected)
-                {
-                    LogController.Instance.debug("Player has exited the trigger!" + other.name);
-                }
-            }
-        }
-    }
-
-    private Coroutine resetCoroutine = null;
-
-    public void StopResetCoroutine()
-    {
-        if (this.resetCoroutine != null)
-        {
-            StopCoroutine(this.resetCoroutine);
-            this.resetCoroutine = null;
-        }
-    }
-
-    IEnumerator delayResetCharacter()
-    {
-        if (this.characterStatus != CharacterStatus.recover)
-        {
-            this.characterStatus = CharacterStatus.recover;
-            this.transform.DOScale(0f, 1f);
-            this.GetComponent<CircleCollider2D>().enabled = false;
-            yield return new WaitForSeconds(2.0f);
-            var gridManager = GameController.Instance.gridManager;
-            this.playerReset(gridManager.newCharacterPosition);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (this.characterStatus == CharacterStatus.moving)
-        {
-            if (this.gameObject.name != collision.gameObject.name)
-            {
-                Rigidbody2D rb = collision.rigidbody;
-                Vector2 relativeVelocity = collision.relativeVelocity;
-
-                // Calculate the distance between the two objects
-                float distance = Vector2.Distance(this.playerCurrentPosition, collision.transform.localPosition);
-
-                var distanceFactor = distance / 10000f;
-                this.reducedFactor = this.reduceBaseFactor + distanceFactor;
-                // Apply the reduced factor
-                collision.gameObject.GetComponent<PlayerController>().reducedFactor = this.reducedFactor;
-                rb.angularVelocity = 0f;
-
-                // Debug log the collision information
-                LogController.Instance.debug($"Collision with: {collision.gameObject.name},distanceFactor: {distanceFactor}, Reduced Factor: {reducedFactor}, Distance: {distance}");
-            }
-            AudioController.Instance?.PlayAudio(10); //blob
-            this.StopCharacter();
-        }
-    }
-
-
-
-    /*private void OnCollisionExit2D(Collision2D collision)
-    {
-        collision.collider.enabled = true;
-    }*/
 }

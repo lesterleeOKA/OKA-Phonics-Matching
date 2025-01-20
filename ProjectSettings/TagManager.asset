@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - GameBackground
+  - P1_ResultScore
+  - P1_Icon
+  - MoveItem
+  - Player_0
+  - P1_Score
   layers:
   - Default
   - TransparentFX

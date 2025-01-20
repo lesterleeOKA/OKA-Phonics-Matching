@@ -7,7 +7,6 @@ public class CharacterAnimation : MonoBehaviour
     public CharacterSet characterSet;
     public float frameRate = 10f; // Frame rate for the animation
     public ParticleSystem runEffect;
-    public RawImage boardImage;
     public RawImage characterImage;
     public int currentFrame = 0;
     private Coroutine walkingCoroutine;
@@ -16,10 +15,6 @@ public class CharacterAnimation : MonoBehaviour
     {
         if(this.characterImage == null) this.characterImage = GetComponent<RawImage>();
         this.setIdling();
-        if(this.boardImage != null)
-        {
-            this.boardImage.texture = characterSet.boardTexture;
-        }
     }
 
     void setParticleLayer(int layerOrder)

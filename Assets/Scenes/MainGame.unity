@@ -626,6 +626,7 @@ MonoBehaviour:
   totalQuestions: 4
   gridLayoutGroup: {fileID: 36465276}
   maxRowCount: 2
+  cards: []
 --- !u!114 &36465276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1833,7 +1834,7 @@ GameObject:
   m_Component:
   - component: {fileID: 372047223}
   - component: {fileID: 372047225}
-  - component: {fileID: 372047222}
+  - component: {fileID: 372047226}
   - component: {fileID: 372047224}
   m_Layer: 0
   m_Name: GameController
@@ -1842,50 +1843,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &372047222
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 372047221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 802f0ac2bf54bfa489d1281078113248, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentQuestion:
-    numberQuestion: 0
-    answeredQuestion: -1
-    questiontype: 0
-    qa:
-      id: 0
-      qid: 
-      questionType: 
-      question: 
-      answers: []
-      correctAnswer: 
-      star: 0
-      score:
-        full: 0
-        n: 0
-        unit: 0
-      correctAnswerIndex: 0
-      maxScore: 0
-      media: []
-      texture: {fileID: 0}
-      audioClip: {fileID: 0}
-    correctAnswerId: 0
-    correctAnswer: 
-    answersChoics: []
-    questionBgs:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    audioPlayBtn: {fileID: 0}
-    progressiveBar: {fileID: 1156371262}
-    progressFillImage: {fileID: 1156371261}
 --- !u!4 &372047223
 Transform:
   m_ObjectHideFlags: 0
@@ -1967,7 +1924,13 @@ MonoBehaviour:
   maxPlayers: 1
   playing: 0
   showingPopup: 0
-  characterSets: []
+  characterSets:
+  - name: p1
+    playerNumber: 0
+    playerColor: {r: 0.16078432, g: 0.6666667, b: 0.882353, a: 1}
+    defaultIcon: {fileID: 2800000, guid: bc25a2dfb6637e4448e34453ed635ac0, type: 3}
+    idlingTexture: {fileID: 0}
+    walkingAnimationTextures: []
   gridManager:
     cellPrefab: {fileID: 0}
     parent: {fileID: 0}
@@ -1981,14 +1944,33 @@ MonoBehaviour:
     showQuestionWordPosition: 0
     isMCType: 0
     gridCount: 0
-  playerPrefab: {fileID: 0}
-  parent: {fileID: 0}
-  defaultAnswerBox: []
+  playerPrefab: {fileID: 6606873324357462162, guid: 4263fd549a8d6414f9ea206ca9c4b1e3, type: 3}
+  parent: {fileID: 372047223}
   playerControllers: []
   showCells: 0
   audioTypeButtons: []
   fillInBlankTypeButtons: []
   choiceText: {fileID: 0}
+--- !u!114 &372047226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372047221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 678d0b8458f381c48aa8237f9dcca449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalPages: 0
+  cardpages: []
+  cardManager:
+    cellPrefab: {fileID: 516387000755479487, guid: f6ec18a2885532b40a2995e2398c32b5, type: 3}
+    totalQuestions: 4
+    gridLayoutGroup: {fileID: 36465276}
+    maxRowCount: 2
+    cards: []
 --- !u!1 &377093154
 GameObject:
   m_ObjectHideFlags: 0
@@ -5595,22 +5577,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6682978019096268022, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
   m_PrefabInstance: {fileID: 1156371259}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1156371261 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4992706001920921311, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
-  m_PrefabInstance: {fileID: 1156371259}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!225 &1156371262 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 5592260872145268353, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
-  m_PrefabInstance: {fileID: 1156371259}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1156882380
 GameObject:
   m_ObjectHideFlags: 0
@@ -7205,21 +7171,25 @@ PrefabInstance:
       propertyPath: playerNameBoxes.Array.data[0]
       value: 
       objectReference: {fileID: 1481345905}
+    - target: {fileID: 7327611161318095446, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
+      propertyPath: m_TagString
+      value: P1_Score
+      objectReference: {fileID: 0}
     - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 266.3883
+      objectReference: {fileID: 0}
+    - target: {fileID: 8891115048027758453, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8899460191781525649, guid: 327f124e2bd7112499ce3ae6029e65c0, type: 3}
       propertyPath: m_IsActive

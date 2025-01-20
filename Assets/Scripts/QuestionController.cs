@@ -17,6 +17,7 @@ public class QuestionController : MonoBehaviour
         this.GetQuestionAnswer();
     }
 
+    
     public void GetQuestionAnswer()
     {
         if (LoaderConfig.Instance == null || QuestionManager.Instance == null)
@@ -31,7 +32,6 @@ public class QuestionController : MonoBehaviour
                 return;
             }
 
-            string correctAnswer = this.currentQuestion.correctAnswer;
             int questionCount = questionDataList.questions.Count;
             bool isLogined = LoaderConfig.Instance.apiManager.IsLogined;
             QuestionList qa = questionDataList.questions[this.currentQuestion.numberQuestion];
