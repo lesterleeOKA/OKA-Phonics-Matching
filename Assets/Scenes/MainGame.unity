@@ -583,7 +583,6 @@ GameObject:
   m_Component:
   - component: {fileID: 36465274}
   - component: {fileID: 36465276}
-  - component: {fileID: 36465275}
   m_Layer: 5
   m_Name: GridLayout
   m_TagString: Untagged
@@ -610,23 +609,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -64.02}
   m_SizeDelta: {x: 2200, y: 1150}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &36465275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 36465273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b81a62df25b343547aea5f3596545261, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 516387000755479487, guid: f6ec18a2885532b40a2995e2398c32b5, type: 3}
-  totalQuestions: 4
-  gridLayoutGroup: {fileID: 36465276}
-  maxRowCount: 2
-  cards: []
 --- !u!114 &36465276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1931,19 +1913,16 @@ MonoBehaviour:
     defaultIcon: {fileID: 2800000, guid: bc25a2dfb6637e4448e34453ed635ac0, type: 3}
     idlingTexture: {fileID: 0}
     walkingAnimationTextures: []
-  gridManager:
-    cellPrefab: {fileID: 0}
-    parent: {fileID: 0}
-    gridRow: 4
-    gridColumn: 4
-    maxRetries: 10
-    characterPositionsCellIds: 
-    disableCellIds: 
-    showCellIdList: 
-    availablePositions: []
-    showQuestionWordPosition: 0
-    isMCType: 0
-    gridCount: 0
+  cardManager:
+    cardsStatus: 0
+    cellPrefab: {fileID: 516387000755479487, guid: f6ec18a2885532b40a2995e2398c32b5, type: 3}
+    totalCards: 16
+    gridLayoutGroup: {fileID: 36465276}
+    maxRowCount: 2
+    flickedCardNumber: 0
+    flickedCards: []
+    cards: []
+    remainQuestions: 4
   playerPrefab: {fileID: 6606873324357462162, guid: 4263fd549a8d6414f9ea206ca9c4b1e3, type: 3}
   parent: {fileID: 372047223}
   playerControllers: []
@@ -1951,6 +1930,8 @@ MonoBehaviour:
   audioTypeButtons: []
   fillInBlankTypeButtons: []
   choiceText: {fileID: 0}
+  numberOfQuestions: 4
+  gameStatus: 0
 --- !u!114 &372047226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1963,14 +1944,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 678d0b8458f381c48aa8237f9dcca449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalPages: 0
-  cardpages: []
-  cardManager:
-    cellPrefab: {fileID: 516387000755479487, guid: f6ec18a2885532b40a2995e2398c32b5, type: 3}
-    totalQuestions: 4
-    gridLayoutGroup: {fileID: 36465276}
-    maxRowCount: 2
-    cards: []
+  cardPages:
+    totalPages: 0
+    currentPage: 0
+    pages: []
 --- !u!1 &377093154
 GameObject:
   m_ObjectHideFlags: 0

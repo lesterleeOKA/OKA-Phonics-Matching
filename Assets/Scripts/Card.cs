@@ -2,6 +2,9 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine.UI;
+using System;
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 
 public enum CardType
@@ -15,19 +18,34 @@ public enum CardType
 public class Card : MonoBehaviour
 {
     public string qid = "";
+    public QuestionList question;
     public CardType type = CardType.Text;
+    public CardStatus cardStatus = CardStatus.hidden;
     public Transform cardImage;
     public TextMeshProUGUI qaText;
     public RawImage qaImage;
     public AudioSource qaAudio;
-    public bool selected = false;
     public float flickDuration = 0.5f;
     public float flickAngle = 180f;
+    public bool isAnimated = false;
+
+    private EventTrigger eventTrigger;
+    public UnityAction<Card> OnCardClick;
 
     public string CardId
     {
         set { this.qid = value; }
         get { return this.qid; } 
+    }
+
+    void Awake()
+    {
+        // Get or add the EventTrigger component
+        this.eventTrigger = this.GetComponent<EventTrigger>();
+        if (this.eventTrigger == null)
+        {
+            this.eventTrigger = this.gameObject.AddComponent<EventTrigger>();
+        }
     }
 
     private void Start()
@@ -46,6 +64,7 @@ public class Card : MonoBehaviour
                 cardImg.sprite = cardSprite;
             }
         }
+        this.AddPointerClickEvent(OnCardClicked);
     }
 
     public void setContent(CardType _type,
@@ -53,10 +72,15 @@ public class Card : MonoBehaviour
         Texture _picture = null, 
         AudioClip _audio = null,
         string _correctAnswer = "",
-        string _cardId = "")
+        string _cardId = "",
+        QuestionList _question = null)
     {
+        if(!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);
+
+        this.cardStatus = CardStatus.hidden;
         this.type = _type;
         this.CardId = _cardId;
+        this.question = _question;
 
         switch (this.type)
         {
@@ -72,16 +96,19 @@ public class Card : MonoBehaviour
                 {
                     var aspecRatioFitter = this.qaImage.GetComponent<AspectRatioFitter>();
                     var width = this.qaImage.GetComponent<RectTransform>().sizeDelta.x;
+                    var height = this.qaImage.GetComponent<RectTransform>().sizeDelta.y;
                     if (_picture.width > _picture.height)
                     {
-                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 235f);
+                        aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(425f, height);
+                        aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
                     }
                     else
                     {
-                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 310f);
+                        aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
+                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 425f);
+                        aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
                     }
-                    aspecRatioFitter.aspectRatio = (float)_picture.width / (float)
-                    _picture.height;
                     this.qaImage.texture = _picture;
                 }
                 break;
@@ -96,7 +123,7 @@ public class Card : MonoBehaviour
 
     void setElements(bool status, float delay = 0f)
     {
-        this.selected = status;
+        this.cardStatus = status ? CardStatus.flicked : CardStatus.hidden;
         switch (this.type)
         {
             case CardType.Text:
@@ -137,19 +164,51 @@ public class Card : MonoBehaviour
         }
     }
 
-    public void Flick(bool status)
+    public void Flick(bool status, Action OnCompleted = null)
     {
-        if(this.cardImage  != null && !this.selected)
+        if(this.cardImage  != null && 
+           this.cardStatus != CardStatus.flicked &&
+           this.cardStatus != CardStatus.checking &&
+           this.cardImage.gameObject.activeInHierarchy &&
+           !this.isAnimated)
         {
+            this.isAnimated = true;
             this.cardImage.DOKill();
             this.setElements(status, this.flickDuration / 2);
-            this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration / 2);
+            this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration).OnComplete(()=>
+            {
+                this.isAnimated = false;
+            });
+            OnCompleted?.Invoke();
         }
     }
 
     public void ResetFlick()
     {
-        this.selected = false;
+        this.cardStatus = CardStatus.reset;
         this.Flick(false);
     }
+
+    public void AddPointerClickEvent(UnityAction<BaseEventData> action)
+    {
+        EventTrigger.Entry entry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerClick
+        };
+        entry.callback.AddListener(action);
+        this.eventTrigger.triggers.Add(entry);
+    }
+
+    private void OnCardClicked(BaseEventData eventData)
+    {
+        this.OnCardClick?.Invoke(this);
+    }
+}
+
+public enum CardStatus
+{
+    hidden,
+    flicked,
+    checking, // add checking effect
+    reset
 }

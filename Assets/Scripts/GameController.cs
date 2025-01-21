@@ -1,12 +1,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 public class GameController : GameBaseController
 {
     public static GameController Instance = null;
     public CharacterSet[] characterSets;
-    public GridManager gridManager;
+    private CardQuestions questionController = null;
+    public GenerateCard cardManager;
     public Cell[,] grid;
     public GameObject playerPrefab;
     public Transform parent;
@@ -14,6 +16,8 @@ public class GameController : GameBaseController
     public bool showCells = false;
     public CanvasGroup[] audioTypeButtons, fillInBlankTypeButtons;
     public TextMeshProUGUI choiceText;
+    public int numberOfQuestions = 4;
+    public GameStatus gameStatus = GameStatus.ready;
 
     protected override void Awake()
     {
@@ -29,24 +33,22 @@ public class GameController : GameBaseController
 
     void CreateGrids()
     {
-        Sprite gridTexture = LoaderConfig.Instance.gameSetup.gridTexture != null ?
+        Sprite cardImage = LoaderConfig.Instance.gameSetup.gridTexture != null ?
                             SetUI.ConvertTextureToSprite(LoaderConfig.Instance.gameSetup.gridTexture as Texture2D) : null;
-        //this.grid = gridManager.CreateGrid(gridTexture);
+        this.cardManager.CreateCard(this.numberOfQuestions, cardImage);
     }
 
     
     private IEnumerator InitialQuestion()
     {
-        var questionController = CardQuestions.Instance;
-        if (questionController == null) yield break;
-        questionController.GetAllQuestionAnswers(4);
+        if (questionController == null) this.questionController = CardQuestions.Instance;
+        this.questionController.GetAllQuestionAnswers(this.numberOfQuestions, this.cardManager);
         yield return new WaitForEndOfFrame();
         this.createPlayer();
     }
 
     void createPlayer()
     {
-
         for (int i = 0; i < this.maxPlayers; i++)
         {
             if (i < this.playerNumber)
@@ -57,7 +59,9 @@ public class GameController : GameBaseController
                 this.playerControllers.Add(playerController);
                 this.playerControllers[i].Init(this.characterSets[i]);
 
-                if (i == 0 && LoaderConfig.Instance != null && LoaderConfig.Instance.apiManager.peopleIcon != null)
+                if (i == 0 && 
+                    LoaderConfig.Instance != null && 
+                    LoaderConfig.Instance.apiManager.peopleIcon != null)
                 {
                     var _playerName = LoaderConfig.Instance?.apiManager.loginName;
                     var icon = SetUI.ConvertTextureToSprite(LoaderConfig.Instance.apiManager.peopleIcon as Texture2D);
@@ -94,6 +98,8 @@ public class GameController : GameBaseController
                 // notUsedPlayerController.SetActive(false);
             }
         }
+
+        this.gameStatus = GameStatus.ready;
     }
 
 
@@ -127,31 +133,17 @@ public class GameController : GameBaseController
 
     public void PrepareNextQuestion()
     {
-        LogController.Instance?.debug("Prepare Next Question");
+        StartCoroutine(this.delayToNextPage(2.0f));
     }
 
-    public void UpdateNextQuestion()
+    IEnumerator delayToNextPage(float _delay = 0f)
     {
-        LogController.Instance?.debug("Next Question");
-        var questionController = QuestionController.Instance;
-
-        if (questionController != null) {
-            questionController.nextQuestion();
-
-            if (questionController.currentQuestion.answersChoics != null &&
-                questionController.currentQuestion.answersChoics.Length > 0)
-            {
-                string[] answers = questionController.currentQuestion.answersChoics;
-                this.gridManager.UpdateGridWithWord(answers, null);
-            }
-            else
-            {
-                string word = questionController.currentQuestion.correctAnswer;
-                this.gridManager.UpdateGridWithWord(null, word);
-            }
-
-            this.playersReset();
-        }       
+        this.gameStatus = GameStatus.changePage;
+        LogController.Instance?.debug("Prepare Next Question");
+        this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager);
+        this.playersReset();
+        yield return new WaitForSeconds(_delay);
+        this.gameStatus = GameStatus.ready;
     }
 
     void playersReset()
@@ -161,7 +153,6 @@ public class GameController : GameBaseController
             if (this.playerControllers[i] != null)
             {
                 this.playerControllers[i].resetRetryTime();
-                this.playerControllers[i].flickedCard.Clear();
                 this.playerControllers[i].playerReset();
             }
         }
@@ -172,30 +163,37 @@ public class GameController : GameBaseController
     {
         if(!this.playing) return;
 
-        if(Input.GetKeyDown(KeyCode.F1))
-        {
-            this.showCells = !this.showCells;
-            this.gridManager.setAllCellsStatus(this.showCells);
-        }
-        else if (Input.GetKeyDown(KeyCode.F2))
+        if (Input.GetKeyDown(KeyCode.F2))
         {
             this.playersReset();
         }
         if (Input.GetKeyDown(KeyCode.F3))
         {
-            this.UpdateNextQuestion();
+            this.PrepareNextQuestion();
         }
 
-       
+       LogController.Instance?.debug("selected cards:" + this.cardManager.flickedCardNumber);
+
+        if(this.playerControllers.Count > 0 && this.gameStatus == GameStatus.ready)
+        {
+            bool nextQuestionPage = this.cardManager.remainQuestions == 0 ? true : false;       
+            if (nextQuestionPage)
+            {
+                this.PrepareNextQuestion();
+            }
+            else
+            {
+                this.cardManager.CheckingCardStatus(this.gameTimer, this.playerControllers[0]);
+            }
+
+        }
+        
 
     } 
 }
 
-
-public enum CardStatus
+public enum GameStatus
 {
-    hidden,
-    flicked,
-    checking,
-    reset
+    ready,
+    changePage,
 }

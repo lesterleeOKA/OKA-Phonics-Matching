@@ -17,9 +17,9 @@ public class PlayerController : UserData
     public float speed;
     private CharacterAnimation characterAnimation = null;
     private TextMeshProUGUI answerBox = null;
-    public List<Card> flickedCard = new List<Card>();
     public float countGetAnswerAtStartPoints = 2f;
     private float countAtStartPoints = 0f;
+    public int answeredQuestion = 0;
 
 
 
@@ -100,39 +100,27 @@ public class PlayerController : UserData
         return char.ToUpper(str[0]) + str.Substring(1).ToLower();
     }
 
-    public void checkAnswer(int currentTime, Action onCompleted = null)
+    public void checkAnswer(int currentTime, 
+                            QuestionList cardQuestion_1=null,
+                            QuestionList cardQuestion_2 = null,
+                            Action successCalled = null,
+                            Action failureCalled = null)
     {
-        var currentQuestion = QuestionController.Instance?.currentQuestion;
-        if(currentQuestion.answersChoics == null || currentQuestion.answersChoics.Length == 0) return;
-
-        var getChoice = this.answerBox.text;
-        var lowerQIDAns = currentQuestion.correctAnswer.ToLower();
-        switch (getChoice)
-        {
-            case "A":
-                this.answer = currentQuestion.answersChoics[0].ToLower();
-                break;
-            case "B":
-                this.answer = currentQuestion.answersChoics[1].ToLower();
-                break;
-            case "C":
-                this.answer = currentQuestion.answersChoics[2].ToLower();
-                break;
-            case "D":
-                this.answer = currentQuestion.answersChoics[3].ToLower();
-                break;
-        }
-        if(this.answer != lowerQIDAns) 
-            return;
+        if(cardQuestion_1 == null || cardQuestion_2 == null) return;
+        this.answer = cardQuestion_1.correctAnswer.ToLower();
+        var pairAnswer = cardQuestion_2.correctAnswer.ToLower();
 
         if (!this.IsCheckedAnswer)
         {
             this.IsCheckedAnswer = true;
             var loader = LoaderConfig.Instance;
-            int eachQAScore = currentQuestion.qa.score.full == 0 ? 10 : currentQuestion.qa.score.full;
+            int eachQAScore = cardQuestion_1.score.full == 0 ? 10 : cardQuestion_1.score.full;
             int currentScore = this.Score;
 
-            int resultScore = this.scoring.score(this.answer, currentScore, lowerQIDAns, eachQAScore);
+            int resultScore = this.scoring.score(this.answer, 
+                                                 currentScore,
+                                                 pairAnswer, 
+                                                 eachQAScore);
             this.Score = resultScore;
             this.IsCorrect = this.scoring.correct;
             StartCoroutine(this.showAnswerResult(this.scoring.correct,()=>
@@ -143,10 +131,12 @@ public class PlayerController : UserData
                     int correctId = 0;
                     float score = 0f;
                     float answeredPercentage;
-                    int progress = (int)((float)currentQuestion.answeredQuestion / QuestionManager.Instance.totalItems * 100);
+                    int progress = 0;
 
-                    if (this.answer == lowerQIDAns)
+                    if (this.answer == pairAnswer)
                     {
+                        this.answeredQuestion += 1;
+                        progress = (int)((float)this.answeredQuestion / QuestionManager.Instance.totalItems * 100);
                         if (this.CorrectedAnswerNumber < QuestionManager.Instance.totalItems)
                             this.CorrectedAnswerNumber += 1;
 
@@ -173,6 +163,8 @@ public class PlayerController : UserData
                         answeredPercentage = 100f;
                     }
 
+                    var onCompleted = this.answer == pairAnswer? successCalled : failureCalled;
+
                     loader.SubmitAnswer(
                                currentTime,
                                this.Score,
@@ -180,10 +172,10 @@ public class PlayerController : UserData
                                progress,
                                correctId,
                                currentTime,
-                               currentQuestion.qa.qid,
-                               currentQuestion.correctAnswerId,
+                               cardQuestion_1.qid,
+                               cardQuestion_1.correctAnswerIndex,
                                this.CapitalizeFirstLetter(this.answer),
-                               currentQuestion.correctAnswer,
+                               cardQuestion_1.correctAnswer,
                                score,
                                currentQAPercent,
                                onCompleted
@@ -191,7 +183,10 @@ public class PlayerController : UserData
                 }
                 else
                 {
-                   onCompleted?.Invoke();
+                    if (this.answer == pairAnswer) 
+                        successCalled?.Invoke();
+                    else
+                        failureCalled?.Invoke();
                 }
             }));
         }
@@ -210,13 +205,11 @@ public class PlayerController : UserData
         float delay = 2f;
         if (correct)
         {
-            GameController.Instance?.PrepareNextQuestion();
             LogController.Instance?.debug("Add marks" + this.Score);
             GameController.Instance?.setGetScorePopup(true);
             AudioController.Instance?.PlayAudio(1);
             yield return new WaitForSeconds(delay);
             GameController.Instance?.setGetScorePopup(false);
-            GameController.Instance?.UpdateNextQuestion();
         }
         else
         {
@@ -256,24 +249,6 @@ public class PlayerController : UserData
         }
     }
 
-    public void autoDeductAnswer()
-    {
-        if(this.flickedCard.Count > 0) {
-            if (this.countAtStartPoints > 0f)
-            {
-                this.countAtStartPoints -= Time.deltaTime;
-            }
-            else
-            {
-                this.deductAnswer();
-                this.countAtStartPoints = this.countGetAnswerAtStartPoints;
-            }
-        }
-        else
-        {
-            this.countAtStartPoints = this.countGetAnswerAtStartPoints;
-        }
-    }
 
     public void deductAnswer()
     {

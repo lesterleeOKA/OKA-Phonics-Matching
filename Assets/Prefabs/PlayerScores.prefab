@@ -647,7 +647,7 @@ MonoBehaviour:
   NumberFormat: N0
   Unit: 
   scoringEffect: {fileID: 6557280462373945260}
-  textColor: {r: 0, g: 0, b: 0, a: 0}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
   isAnimatedColor: 1
 --- !u!82 &6557280462373945260
 AudioSource:
@@ -1318,7 +1318,7 @@ MonoBehaviour:
   NumberFormat: N0
   Unit: 
   scoringEffect: {fileID: 2521318396597857824}
-  textColor: {r: 0, g: 0, b: 0, a: 0}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
   isAnimatedColor: 1
 --- !u!82 &2521318396597857824
 AudioSource:
@@ -2990,7 +2990,7 @@ MonoBehaviour:
   NumberFormat: N0
   Unit: 
   scoringEffect: {fileID: 6491943544592315780}
-  textColor: {r: 0, g: 0, b: 0, a: 0}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
   isAnimatedColor: 1
 --- !u!82 &6491943544592315780
 AudioSource:
@@ -3242,7 +3242,7 @@ MonoBehaviour:
   NumberFormat: N0
   Unit: 
   scoringEffect: {fileID: 6397219797466662447}
-  textColor: {r: 0, g: 0, b: 0, a: 0}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
   isAnimatedColor: 1
 --- !u!82 &6397219797466662447
 AudioSource:
