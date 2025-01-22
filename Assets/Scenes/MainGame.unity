@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1930,7 +1930,7 @@ MonoBehaviour:
   audioTypeButtons: []
   fillInBlankTypeButtons: []
   choiceText: {fileID: 0}
-  numberOfQuestions: 4
+  numberOfQuestions: 5
   gameStatus: 0
 --- !u!114 &372047226
 MonoBehaviour:
@@ -1948,6 +1948,11 @@ MonoBehaviour:
     totalPages: 0
     currentPage: 0
     pages: []
+  totalQuestions: 0
+  numberQuestion: 0
+  answeredQuestion: 0
+  progressiveBar: {fileID: 1156371262}
+  progressFillImage: {fileID: 1156371261}
 --- !u!1 &377093154
 GameObject:
   m_ObjectHideFlags: 0
@@ -4102,6 +4107,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -50
       objectReference: {fileID: 0}
+    - target: {fileID: 3319000435792375893, guid: 0017e1a7dfbb96e4eb9744e32abb05b8, type: 3}
+      propertyPath: textColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3319000435792375893, guid: 0017e1a7dfbb96e4eb9744e32abb05b8, type: 3}
+      propertyPath: textColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3319000435792375893, guid: 0017e1a7dfbb96e4eb9744e32abb05b8, type: 3}
+      propertyPath: textColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3319000435792375893, guid: 0017e1a7dfbb96e4eb9744e32abb05b8, type: 3}
+      propertyPath: textColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3588252911741027788, guid: 0017e1a7dfbb96e4eb9744e32abb05b8, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -4884,6 +4905,10 @@ PrefabInstance:
       propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 372047225}
+    - target: {fileID: 1170313352155088994, guid: f0d6743e7b5895140b5f1801d49b3c46, type: 3}
+      propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: endGame
+      objectReference: {fileID: 0}
     - target: {fileID: 2309564992487174586, guid: f0d6743e7b5895140b5f1801d49b3c46, type: 3}
       propertyPath: m_Name
       value: TopLeft
@@ -5552,6 +5577,22 @@ PrefabInstance:
 --- !u!224 &1156371260 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6682978019096268022, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
+  m_PrefabInstance: {fileID: 1156371259}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1156371261 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4992706001920921311, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
+  m_PrefabInstance: {fileID: 1156371259}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!225 &1156371262 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5592260872145268353, guid: 97680683f9721704c9a178e95c4b9335, type: 3}
   m_PrefabInstance: {fileID: 1156371259}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1156882380

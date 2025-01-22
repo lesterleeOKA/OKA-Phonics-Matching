@@ -45,6 +45,9 @@ public class GameController : GameBaseController
         this.questionController.GetAllQuestionAnswers(this.numberOfQuestions, this.cardManager);
         yield return new WaitForEndOfFrame();
         this.createPlayer();
+        yield return new WaitForSeconds(1f);
+        this.cardManager.ResetAllCards();
+        this.gameStatus = GameStatus.ready;
     }
 
     void createPlayer()
@@ -98,8 +101,6 @@ public class GameController : GameBaseController
                 // notUsedPlayerController.SetActive(false);
             }
         }
-
-        this.gameStatus = GameStatus.ready;
     }
 
 
@@ -111,6 +112,7 @@ public class GameController : GameBaseController
 
     public override void endGame()
     {
+        this.gameStatus = GameStatus.endgame;
         bool showSuccess = false;
         for (int i = 0; i < this.playerControllers.Count; i++)
         {
@@ -138,6 +140,7 @@ public class GameController : GameBaseController
 
     IEnumerator delayToNextPage(float _delay = 0f)
     {
+        if(this.gameStatus == GameStatus.endgame) yield return null;
         this.gameStatus = GameStatus.changePage;
         LogController.Instance?.debug("Prepare Next Question");
         this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager);
@@ -183,7 +186,7 @@ public class GameController : GameBaseController
             }
             else
             {
-                this.cardManager.CheckingCardStatus(this.gameTimer, this.playerControllers[0]);
+                this.cardManager.CheckingCardStatus(this.gameTimer, this.playerControllers[0], this.questionController);
             }
 
         }
@@ -196,4 +199,5 @@ public enum GameStatus
 {
     ready,
     changePage,
+    endgame,
 }

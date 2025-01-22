@@ -1,11 +1,18 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardQuestions : MonoBehaviour
 {
     public static CardQuestions Instance = null;
     public CardPages cardPages;
+    public int totalQuestions = 0;
+    public int numberQuestion = 0;
+    public int answeredQuestion = 0;
+    public CanvasGroup progressiveBar;
+    public Image progressFillImage;
 
     private void Awake()
     {
@@ -25,12 +32,12 @@ public class CardQuestions : MonoBehaviour
         try
         {
             var questionDataList = QuestionManager.Instance.questionData;
-            LogController.Instance?.debug("Loaded questions:" + questionDataList.questions.Count);
-            if (questionDataList == null || questionDataList.questions == null || questionDataList.questions.Count == 0)
+            this.totalQuestions = questionDataList.questions.Count;
+            LogController.Instance?.debug("Loaded questions:" + this.totalQuestions);
+            if (questionDataList == null || questionDataList.questions == null || this.totalQuestions == 0)
             {
                 return;
             }
-
             
             this.cardPages.totalPages = questionDataList.questions.Count / numberOfQuestions;
             this.cardPages.pages = new List<Cards>();
@@ -79,6 +86,7 @@ public class CardQuestions : MonoBehaviour
 
             cardManager.ShuffleGridElements(); // sort the layout
             cardManager.remainQuestions = numberOfQuestions;
+            this.setProgressiveBar(true);
         }
         catch (Exception e)
         {
@@ -89,9 +97,13 @@ public class CardQuestions : MonoBehaviour
     public void GetNewPageQuestions(int numberOfQuestions = 0, GenerateCard cardManager = null)
     {
 
-        if (this.cardPages.currentPage < this.cardPages.totalPages)
+        if (this.cardPages.currentPage < this.cardPages.totalPages - 1)
         {
             this.cardPages.currentPage += 1;
+        }
+        else
+        {
+            return;
         }
 
         var newPageCards = this.cardPages.pages[this.cardPages.currentPage];
@@ -145,6 +157,45 @@ public class CardQuestions : MonoBehaviour
             audio.Play();
         }
     }*/
+
+    public void setProgressiveBar(bool status)
+    {
+        if (this.progressiveBar != null)
+        {
+            this.progressiveBar.DOFade(status ? 1f : 0f, 0f);
+            this.progressiveBar.GetComponentInChildren<NumberCounter>().Init(this.numberQuestion.ToString(), "/" + this.totalQuestions);
+        }
+    }
+
+    public bool updateProgressiveBar(Action onQuestionCompleted = null)
+    {
+        bool updating = true;
+        float progress = 0f;
+        if (this.numberQuestion < this.totalQuestions)
+        {
+            this.answeredQuestion += 1;
+            progress = (float)this.answeredQuestion / this.totalQuestions;
+            updating = true;
+        }
+        else
+        {
+            progress = 1f;
+            updating = false;
+        }
+
+        progress = Mathf.Clamp(progress, 0f, 1f);
+        if (this.progressFillImage != null && this.progressiveBar != null)
+        {
+            this.progressFillImage.DOFillAmount(progress, 0.5f).OnComplete(() =>
+            {
+                if (progress >= 1f) GameController.Instance.endGame();
+            });
+
+            this.progressiveBar.GetComponentInChildren<NumberCounter>().Unit = "/" + this.totalQuestions;
+            this.progressiveBar.GetComponentInChildren<NumberCounter>().Value = this.answeredQuestion;
+        }
+        return updating;
+    }
 
 }
 

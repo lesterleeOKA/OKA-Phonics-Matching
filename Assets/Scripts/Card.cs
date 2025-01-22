@@ -81,6 +81,7 @@ public class Card : MonoBehaviour
         this.type = _type;
         this.CardId = _cardId;
         this.question = _question;
+        this.setElements(true);
 
         switch (this.type)
         {
@@ -97,16 +98,16 @@ public class Card : MonoBehaviour
                     var aspecRatioFitter = this.qaImage.GetComponent<AspectRatioFitter>();
                     var width = this.qaImage.GetComponent<RectTransform>().sizeDelta.x;
                     var height = this.qaImage.GetComponent<RectTransform>().sizeDelta.y;
-                    if (_picture.width > _picture.height)
+                    if (_picture.width >= _picture.height)
                     {
                         aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
-                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(425f, height);
+                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(335f, height);
                         aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
                     }
                     else
                     {
                         aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
-                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 425f);
+                        this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 450f);
                         aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
                     }
                     this.qaImage.texture = _picture;

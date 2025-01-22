@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 
 [Serializable]
 public class GenerateCard
@@ -58,7 +57,7 @@ public class GenerateCard
         });
     }
 
-    public void CheckingCardStatus(Timer gameTimer, PlayerController player=null)
+    public void CheckingCardStatus(Timer gameTimer, PlayerController player=null, CardQuestions questionController=null)
     {
 
         switch (this.cardsStatus)
@@ -87,7 +86,14 @@ public class GenerateCard
                                            this.flickedCards[1].question,
                                            () => 
                                            {
-                                               this.RemovPairedCards();
+                                               if(questionController != null)
+                                               {
+                                                   bool updating = questionController.updateProgressiveBar();
+                                                   if (updating)
+                                                   {
+                                                       this.RemovPairedCards();
+                                                   }
+                                               }
                                            },
                                            () =>
                                            {
@@ -123,6 +129,8 @@ public class GenerateCard
         {
             this.remainQuestions -= 1;
         }
+
+
         this.cardsStatus = CardsStatus.reset;
     }
 
