@@ -21,6 +21,7 @@ public class Card : MonoBehaviour
     public QuestionList question;
     public CardType type = CardType.Text;
     public CardStatus cardStatus = CardStatus.hidden;
+    public Ease easeType = Ease.Linear;
     public Transform cardImage;
     public TextMeshProUGUI qaText;
     public RawImage qaImage;
@@ -28,7 +29,7 @@ public class Card : MonoBehaviour
     public float flickDuration = 0.5f;
     public float flickAngle = 180f;
     public bool isAnimated = false;
-
+    public CanvasGroup particleEffect;
     private EventTrigger eventTrigger;
     public UnityAction<Card> OnCardClick;
 
@@ -125,47 +126,55 @@ public class Card : MonoBehaviour
     void setElements(bool status, float delay = 0f)
     {
         this.cardStatus = status ? CardStatus.flicked : CardStatus.hidden;
-        switch (this.type)
+        SetUI.Set(this.particleEffect, status, 1f);
+        CanvasGroup textCg = qaText?.GetComponent<CanvasGroup>();
+        CanvasGroup imageCg = qaImage?.GetComponent<CanvasGroup>();
+        CanvasGroup audioCg = qaAudio?.GetComponent<CanvasGroup>();
+
+        this.FadeOut(textCg, delay);
+        this.FadeOut(imageCg, delay);
+        this.FadeOut(audioCg, delay, () =>
         {
-            case CardType.Text:
-            case CardType.Answer:
-                if (this.qaText != null && this.qaText.GetComponent<CanvasGroup>() != null)
-                {
-                    var text = this.qaText.GetComponent<CanvasGroup>();
-                    if(text != null)
+            if (audioCg != null)
+            {
+                audioCg.interactable = false;
+                audioCg.blocksRaycasts = false;
+            }
+        });
+
+        if (status)
+        {
+            switch (this.type)
+            {
+                case CardType.Text:
+                case CardType.Answer:
+                    this.FadeIn(textCg, delay);
+                    break;
+                case CardType.Image:
+                    this.FadeIn(imageCg, delay);
+                    break;
+                case CardType.Audio:
+                    this.FadeIn(audioCg, delay, () =>
                     {
-                        text.DOFade(status ? 1f : 0f, 0f).SetDelay(delay / 2);
-                    }
-                }
-                break;
-            case CardType.Image:
-                if (this.qaImage != null)
-                {
-                    var image = this.qaImage.GetComponent<CanvasGroup>();
-                    if(image != null)
-                    {
-                        image.DOFade(status ? 1f : 0f, 0f).SetDelay(delay / 2);
-                    }
-                }
-                break;
-            case CardType.Audio:
-                if (this.qaAudio != null)
-                {
-                    var audioBtn = this.qaAudio.GetComponent<CanvasGroup>();
-                    if (audioBtn != null)
-                    {
-                        audioBtn.DOFade(status ? 1f : 0f, 0f).SetDelay(delay / 2).OnComplete(()=>
-                        {
-                            audioBtn.interactable = status;
-                            audioBtn.blocksRaycasts = status;
-                        });
-                    }
-                }
-                break;
+                        audioCg.interactable = true;
+                        audioCg.blocksRaycasts = true;
+                    });
+                    break;
+            }
         }
     }
 
-    public void Flick(bool status, Action OnCompleted = null)
+    void FadeOut(CanvasGroup cg, float delay, Action onComplete = null)
+    {
+        cg?.DOFade(0f, 0f).SetDelay(delay / 2).OnComplete(()=> onComplete());
+    }
+
+    void FadeIn(CanvasGroup cg, float delay, Action onComplete = null)
+    {
+        cg?.DOFade(1f, 0f).SetDelay(delay / 2).OnComplete(() => onComplete());
+    }
+
+    public void Flick(bool status, float delay=0f, Action OnCompleted = null)
     {
         if(this.cardImage  != null && 
            this.cardStatus != CardStatus.flicked &&
@@ -175,19 +184,52 @@ public class Card : MonoBehaviour
         {
             this.isAnimated = true;
             this.cardImage.DOKill();
-            this.setElements(status, this.flickDuration / 2);
-            this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration).OnComplete(()=>
+            this.setElements(status, this.flickDuration + 0.5f + delay);
+
+            if (status)
             {
-                this.isAnimated = false;
-            });
+                this.cardImage.DOScale(1.1f, 0.5f).OnComplete(() =>
+                {
+                    this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration).SetEase(this.easeType).SetDelay(delay).OnPlay(() =>
+                    {
+                        AudioController.Instance?.PlayAudio(12);
+                        if (this.type == CardType.Audio)
+                        {
+                            this.PlayCurrentQuestionAudio();
+                        }
+                    }).OnComplete(() =>
+                    {
+                        this.isAnimated = false;
+                    });
+                });
+            }
+            else
+            {
+                this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration).SetEase(this.easeType).SetDelay(delay).OnPlay(()=>
+                {
+                    AudioController.Instance?.PlayAudio(12);
+                }).OnComplete(() =>
+                {
+                    this.cardImage.DOScale(1f, 0.5f).OnComplete(() =>
+                    {
+                        this.isAnimated = false;
+                    });
+                });
+            }
+            
             OnCompleted?.Invoke();
         }
     }
 
-    public void ResetFlick()
+    public void ResetFlick(float delay=0f)
     {
         this.cardStatus = CardStatus.reset;
-        this.Flick(false);
+        this.Flick(false, delay);
+    }
+
+    public void dissolveCard()
+    {
+        this.gameObject.SetActive(false);
     }
 
     public void AddPointerClickEvent(UnityAction<BaseEventData> action)
@@ -204,12 +246,20 @@ public class Card : MonoBehaviour
     {
         this.OnCardClick?.Invoke(this);
     }
+
+    public void PlayCurrentQuestionAudio()
+    {
+        if (this.qaAudio != null && this.qaAudio.clip != null)
+        {
+            this.qaAudio.Play();
+        }
+    }
 }
 
 public enum CardStatus
 {
     hidden,
     flicked,
-    checking, // add checking effect
+    checking,
     reset
 }

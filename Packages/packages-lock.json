@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.coffee.ui-effect": {
+      "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "213daa85e93d96ae97d684c83c779d30b657fa1e"
+    },
     "com.unity.collab-proxy": {
       "version": "2.6.0",
       "depth": 0,

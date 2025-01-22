@@ -48,38 +48,28 @@ public class CardQuestions : MonoBehaviour
                 _cards.name = "Page_" + i;
                 for (int j = 0; j < numberOfQuestions; j++)
                 {
-                    //int questionCount = questionDataList.questions.Count;
-                    bool isLogined = LoaderConfig.Instance.apiManager.IsLogined;
+                    QuestionList _qa = questionDataList.questions[(i * numberOfQuestions) + j];
+                    _cards.qa.Add(_qa);
 
-                    if (isLogined)
+                    // First card for the question content
+                    switch (_qa.questionType)
                     {
-
+                        case "picture":
+                            cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
+                            break;
+                        case "audio":
+                            cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
+                            break;
+                        case "text":
+                            cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
+                            break;
+                        case "fillInBlank":
+                            // You can add specific logic for fill-in-the-blank if needed
+                            break;
                     }
-                    else
-                    {
-                        QuestionList _qa = questionDataList.questions[(i * numberOfQuestions) + j];
-                        _cards.qa.Add(_qa);
 
-                        // First card for the question content
-                        switch (_qa.questionType)
-                        {
-                            case "picture":
-                                cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
-                                break;
-                            case "audio":
-                                cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
-                                break;
-                            case "text":
-                                cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
-                                break;
-                            case "fillInBlank":
-                                // You can add specific logic for fill-in-the-blank if needed
-                                break;
-                        }
-
-                        // Second card for the correct answer
-                        cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
-                    }
+                    // Second card for the correct answer
+                    cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
                 }
                 this.cardPages.pages.Add(_cards);
             }
@@ -110,53 +100,29 @@ public class CardQuestions : MonoBehaviour
 
         for (int j = 0; j < numberOfQuestions; j++)
         {
-            bool isLogined = LoaderConfig.Instance.apiManager.IsLogined;
-
-            if (isLogined)
+            QuestionList _qa = newPageCards.qa[j];
+            switch (_qa.questionType)
             {
-
+                case "picture":
+                    cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
+                    break;
+                case "audio":
+                    cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
+                    break;
+                case "text":
+                    cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
+                    break;
+                case "fillInBlank":
+                    // You can add specific logic for fill-in-the-blank if needed
+                    break;
             }
-            else
-            {
-                QuestionList _qa = newPageCards.qa[j];
-                switch (_qa.questionType)
-                {
-                    case "picture":
-                        cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
-                        break;
-                    case "audio":
-                        cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
-                        break;
-                    case "text":
-                        cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
-                        break;
-                    case "fillInBlank":
-                        // You can add specific logic for fill-in-the-blank if needed
-                        break;
-                }
-                cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
-            }
+            cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
         }
 
         cardManager.ShuffleGridElements();
         cardManager.remainQuestions = numberOfQuestions;
-        cardManager.ResetAllCards();
+        cardManager.ResetAllCards(1f);
     }
-
-    /*
-    public void PlayCurrentQuestionAudio()
-    {
-        this.currentQuestion.playAudio();
-    }
-
-    public void PlayCurrentQuestionAudio(AudioSource audio)
-    {
-        if (audio != null)
-        {
-            audio.clip = this.currentQuestion.currentAudioClip;
-            audio.Play();
-        }
-    }*/
 
     public void setProgressiveBar(bool status)
     {

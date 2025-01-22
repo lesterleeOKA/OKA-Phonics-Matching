@@ -1,6 +1,126 @@
 {
   "questions": [
     {
+      "qid": "p1u3-a1",
+      "questionType": "audio",
+      "question": "School Bag",
+      "correctAnswer": "School Bag"
+    },
+    {
+      "qid": "p1u3-a2",
+      "questionType": "audio",
+      "question": "Book",
+      "correctAnswer": "Book"
+    },
+    {
+      "qid": "p1u3-a3",
+      "questionType": "audio",
+      "question": "Pen",
+      "correctAnswer": "Pen"
+    },
+    {
+      "qid": "p1u3-a4",
+      "questionType": "audio",
+      "question": "Eraser",
+      "correctAnswer": "Eraser"
+    },
+    {
+      "qid": "p1u3-a5",
+      "questionType": "audio",
+      "question": "Pencil",
+      "correctAnswer": "Pencil"
+    },
+    {
+      "qid": "p1u3-a6",
+      "questionType": "audio",
+      "question": "Case",
+      "correctAnswer": "Case"
+    },
+    {
+      "qid": "p1u3-a7",
+      "questionType": "audio",
+      "question": "Ruler",
+      "correctAnswer": "Ruler"
+    },
+    {
+      "qid": "p1u3-a8",
+      "questionType": "audio",
+      "question": "Crayons",
+      "correctAnswer": "Crayons"
+    },
+    {
+      "qid": "p1u3-a9",
+      "questionType": "audio",
+      "question": "Glue",
+      "correctAnswer": "Glue"
+    },
+    {
+      "qid": "p1u3-a10",
+      "questionType": "audio",
+      "question": "Stapler",
+      "correctAnswer": "Stapler"
+    },
+    {
+      "qid": "p1u3-a11",
+      "questionType": "audio",
+      "question": "Scissors",
+      "correctAnswer": "Scissors"
+    },
+    {
+      "qid": "p1u3-a12",
+      "questionType": "audio",
+      "question": "Notebook",
+      "correctAnswer": "Notebook"
+    },
+    {
+      "qid": "p1u3-a13",
+      "questionType": "audio",
+      "question": "Paper",
+      "correctAnswer": "Paper"
+    },
+    {
+      "qid": "p1u3-a14",
+      "questionType": "audio",
+      "question": "Bottle",
+      "correctAnswer": "Bottle"
+    },
+    {
+      "qid": "p1u3-a15",
+      "questionType": "audio",
+      "question": "Lunchbox",
+      "correctAnswer": "Lunchbox"
+    },
+    {
+      "qid": "p1u3-a16",
+      "questionType": "audio",
+      "question": "Snacks",
+      "correctAnswer": "Snacks"
+    },
+    {
+      "qid": "p1u3-a17",
+      "questionType": "audio",
+      "question": "Homework",
+      "correctAnswer": "Homework"
+    },
+    {
+      "qid": "p1u3-a18",
+      "questionType": "audio",
+      "question": "Folder",
+      "correctAnswer": "Folder"
+    },
+    {
+      "qid": "p1u3-a19",
+      "questionType": "audio",
+      "question": "Sharpener",
+      "correctAnswer": "Sharpener"
+    },
+    {
+      "qid": "p1u3-a20",
+      "questionType": "audio",
+      "question": "Highlighter",
+      "correctAnswer": "Highlighter"
+    },
+    {
       "qid": "p1u3-c1",
       "questionType": "picture",
       "question": "School Bag",

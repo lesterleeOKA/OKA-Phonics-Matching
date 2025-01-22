@@ -49,7 +49,7 @@ public class GenerateCard
 
     void FlickedNumberOfCard(Card clickedCard)
     {
-        clickedCard.Flick(true, ()=>
+        clickedCard.Flick(true, 0f, ()=>
         {
             this.flickedCardNumber += 1;
             LogController.Instance?.debug($"Card with ID {clickedCard.qid} clicked!");
@@ -121,7 +121,7 @@ public class GenerateCard
         {
             if (this.flickedCards.Contains(card))
             { 
-                card.gameObject.SetActive(false);
+                card.dissolveCard();
             }
         }
 
@@ -150,14 +150,14 @@ public class GenerateCard
         this.cardsStatus = CardsStatus.ready;
     }
 
-    public void ResetAllCards()
+    public void ResetAllCards(float delay=0f)
     {
         LogController.Instance?.debug("All Cards are reset");
         this.flickedCardNumber = 0;
         this.flickedCards.Clear();
         for (int i = 0; i < this.cards.Count; i++)
         {
-            this.cards[i].ResetFlick();
+            this.cards[i].ResetFlick(delay);
         }
         this.cardsStatus = CardsStatus.ready;
     }
