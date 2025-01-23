@@ -48,11 +48,11 @@ public class UIImage
 
 public static class SetUI
 {
-    public static void Set(CanvasGroup _cg=null, bool _status=false, float _duration=0f, Action _onComplete = null)
+    public static void Set(CanvasGroup _cg=null, bool _status=false, float _duration=0f, float _delay=0f, TweenCallback _onComplete = null)
     {
         if (_cg != null)
         {
-            _cg.DOFade(_status? 1f : 0f, _duration).OnComplete(()=> { 
+            _cg.DOFade(_status? 1f : 0f, _duration).SetDelay(_delay).OnComplete(()=> { 
                 if (_onComplete != null) 
                     _onComplete.Invoke(); 
             });

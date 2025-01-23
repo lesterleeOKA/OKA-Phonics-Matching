@@ -1,13 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 public class GameController : GameBaseController
 {
     public static GameController Instance = null;
     public CharacterSet[] characterSets;
-    private CardQuestions questionController = null;
+    public CardQuestions questionController;
     public GenerateCard cardManager;
     public Cell[,] grid;
     public GameObject playerPrefab;
@@ -32,16 +31,16 @@ public class GameController : GameBaseController
     }
 
     void CreateGrids()
-    {
+    {       
         Sprite cardImage = LoaderConfig.Instance.gameSetup.gridTexture != null ?
                             SetUI.ConvertTextureToSprite(LoaderConfig.Instance.gameSetup.gridTexture as Texture2D) : null;
+        
         this.cardManager.CreateCard(this.numberOfQuestions, cardImage);
     }
 
-    
+
     private IEnumerator InitialQuestion()
     {
-        if (questionController == null) this.questionController = CardQuestions.Instance;
         this.questionController.GetAllQuestionAnswers(this.numberOfQuestions, this.cardManager);
         yield return new WaitForEndOfFrame();
         this.createPlayer();

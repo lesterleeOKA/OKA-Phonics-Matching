@@ -18,12 +18,15 @@ public class GenerateCard
 
     private void CalculateCellSize()
     {
-        float totalWidth = this.gridLayoutGroup.GetComponent<RectTransform>().rect.width;
-        float totalHeight = this.gridLayoutGroup.GetComponent<RectTransform>().rect.height;
-        int maxColumns = Mathf.CeilToInt((float)totalCards * 2 / maxRowCount);
-        float cellWidth = (totalWidth - (this.gridLayoutGroup.spacing.x * (maxColumns - 1))) / maxColumns;
-        float cellHeight = (totalHeight - (this.gridLayoutGroup.spacing.y * (maxRowCount - 1))) / maxRowCount;
-        this.gridLayoutGroup.cellSize = new Vector2(cellWidth, cellHeight);
+        if(this.gridLayoutGroup != null)
+        {
+            float totalWidth = this.gridLayoutGroup.GetComponent<RectTransform>().rect.width;
+            float totalHeight = this.gridLayoutGroup.GetComponent<RectTransform>().rect.height;
+            int maxColumns = Mathf.CeilToInt((float)totalCards * 2 / maxRowCount);
+            float cellWidth = (totalWidth - (this.gridLayoutGroup.spacing.x * (maxColumns - 1))) / maxColumns;
+            float cellHeight = (totalHeight - (this.gridLayoutGroup.spacing.y * (maxRowCount - 1))) / maxRowCount;
+            this.gridLayoutGroup.cellSize = new Vector2(cellWidth, cellHeight);
+        }
     }
 
     public void CreateCard(int questionsNumber = 0, Sprite cardSprite = null)
@@ -36,14 +39,17 @@ public class GenerateCard
 
         for (int i = 0; i < totalCells; i++)
         {
-            GameObject cell = GameObject.Instantiate(cellPrefab, this.gridLayoutGroup.transform);
+            GameObject cell = GameObject.Instantiate(this.cellPrefab, this.gridLayoutGroup.transform);
             cell.name = "Cell_" + i;
             RectTransform rectTransform = cell.GetComponent<RectTransform>();
             rectTransform.sizeDelta = this.gridLayoutGroup.cellSize;
             Card card = cell.GetComponent<Card>();
-            card.OnCardClick += FlickedNumberOfCard;
-            card.setCardImage(cardSprite);
-            this.cards.Add(card);
+            if (card != null)
+            {
+                card.OnCardClick += FlickedNumberOfCard;
+                card.setCardImage(cardSprite);
+                this.cards.Add(card);
+            }
         }
     }
 

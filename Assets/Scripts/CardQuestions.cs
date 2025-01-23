@@ -6,18 +6,12 @@ using UnityEngine.UI;
 
 public class CardQuestions : MonoBehaviour
 {
-    public static CardQuestions Instance = null;
     public CardPages cardPages;
     public int totalQuestions = 0;
     public int numberQuestion = 0;
     public int answeredQuestion = 0;
     public CanvasGroup progressiveBar;
     public Image progressFillImage;
-
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-    }
 
     public void nextQuestionPage()
     {

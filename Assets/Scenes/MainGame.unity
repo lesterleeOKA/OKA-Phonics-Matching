@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2079,6 +2079,7 @@ MonoBehaviour:
     defaultIcon: {fileID: 2800000, guid: bc25a2dfb6637e4448e34453ed635ac0, type: 3}
     idlingTexture: {fileID: 0}
     walkingAnimationTextures: []
+  questionController: {fileID: 372047226}
   cardManager:
     cardsStatus: 0
     cellPrefab: {fileID: 516387000755479487, guid: f6ec18a2885532b40a2995e2398c32b5, type: 3}
@@ -9757,6 +9758,18 @@ PrefabInstance:
       propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 372047225}
+    - target: {fileID: 8457365140864245403, guid: 62aed22e3a588764e9582f796c5f72ba, type: 3}
+      propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1032310248}
+    - target: {fileID: 8457365140864245403, guid: 62aed22e3a588764e9582f796c5f72ba, type: 3}
+      propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Init
+      objectReference: {fileID: 0}
+    - target: {fileID: 8457365140864245403, guid: 62aed22e3a588764e9582f796c5f72ba, type: 3}
+      propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Timer, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -2,6 +2,7 @@ Shader "Custom/TwoSidedImageShader"
 {
     Properties
     {
+        _MainTex ("Main Texture", 2D) = "white" {} // Add this line
         _FrontTex ("Front Texture", 2D) = "white" {}
         _BackTex ("Back Texture", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
@@ -37,6 +38,7 @@ Shader "Custom/TwoSidedImageShader"
             };
 
             sampler2D _FrontTex;
+            sampler2D _MainTex; // Declare MainTex
             float4 _Color;
 
             v2f vert (appdata_t v)
@@ -49,7 +51,7 @@ Shader "Custom/TwoSidedImageShader"
 
             half4 frag (v2f i) : SV_Target
             {
-                return tex2D(_FrontTex, i.uv) * _Color;
+                return tex2D(_FrontTex, i.uv) * _Color; // Render front texture
             }
             ENDHLSL
         }
@@ -80,6 +82,7 @@ Shader "Custom/TwoSidedImageShader"
             };
 
             sampler2D _BackTex;
+            sampler2D _MainTex; // Declare MainTex
             float4 _Color;
 
             v2f vert (appdata_t v)
@@ -92,7 +95,7 @@ Shader "Custom/TwoSidedImageShader"
 
             half4 frag (v2f i) : SV_Target
             {
-                return tex2D(_BackTex, i.uv) * _Color;
+                return tex2D(_BackTex, i.uv) * _Color; // Render back texture
             }
             ENDHLSL
         }

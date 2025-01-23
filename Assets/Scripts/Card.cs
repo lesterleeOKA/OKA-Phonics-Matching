@@ -30,8 +30,14 @@ public class Card : MonoBehaviour
     public float flickAngle = 180f;
     public bool isAnimated = false;
     public CanvasGroup particleEffect;
-    private EventTrigger eventTrigger;
+    public EventTrigger eventTrigger;
     public UnityAction<Card> OnCardClick;
+    public EventTrigger.Entry entry;
+
+    private CanvasGroup textCg = null;
+    private CanvasGroup imageCg = null;
+    private CanvasGroup audioCg = null;
+
 
     public string CardId
     {
@@ -39,24 +45,15 @@ public class Card : MonoBehaviour
         get { return this.qid; } 
     }
 
-    void Awake()
-    {
-        // Get or add the EventTrigger component
-        this.eventTrigger = this.GetComponent<EventTrigger>();
-        if (this.eventTrigger == null)
-        {
-            this.eventTrigger = this.gameObject.AddComponent<EventTrigger>();
-        }
-    }
-
-    private void Start()
-    {
-        this.setElements(false);
-    }
-
     public void setCardImage(Sprite cardSprite = null)
     {
-        if(this.cardImage != null && cardSprite != null)
+        // Get or add the EventTrigger component
+        this.textCg = this.qaText?.GetComponent<CanvasGroup>();
+        this.imageCg = this.qaImage?.GetComponent<CanvasGroup>();
+        this.audioCg = this.qaAudio?.GetComponent<CanvasGroup>();
+
+        this.setElements(false);
+        if (this.cardImage != null && cardSprite != null)
         {
             var cardImg = this.cardImage.GetComponent<Image>();
 
@@ -125,20 +122,17 @@ public class Card : MonoBehaviour
 
     void setElements(bool status, float delay = 0f)
     {
+        if(this.textCg == null || this.imageCg == null || this.audioCg == null) return;
         this.cardStatus = status ? CardStatus.flicked : CardStatus.hidden;
         SetUI.Set(this.particleEffect, status, 1f);
-        CanvasGroup textCg = qaText?.GetComponent<CanvasGroup>();
-        CanvasGroup imageCg = qaImage?.GetComponent<CanvasGroup>();
-        CanvasGroup audioCg = qaAudio?.GetComponent<CanvasGroup>();
-
-        this.FadeOut(textCg, delay);
-        this.FadeOut(imageCg, delay);
-        this.FadeOut(audioCg, delay, () =>
+        SetUI.Set(this.textCg, false, 0f, delay/2);
+        SetUI.Set(this.imageCg, false, 0f, delay/2);
+        SetUI.Set(this.audioCg, false, 0f, delay/2, () =>
         {
-            if (audioCg != null)
+            if (this.audioCg != null)
             {
-                audioCg.interactable = false;
-                audioCg.blocksRaycasts = false;
+                this.audioCg.interactable = false;
+                this.audioCg.blocksRaycasts = false;
             }
         });
 
@@ -148,30 +142,20 @@ public class Card : MonoBehaviour
             {
                 case CardType.Text:
                 case CardType.Answer:
-                    this.FadeIn(textCg, delay);
+                    SetUI.Set(this.textCg, true, 0f, delay/2);
                     break;
                 case CardType.Image:
-                    this.FadeIn(imageCg, delay);
+                    SetUI.Set(this.imageCg, true, 0f, delay/2);
                     break;
                 case CardType.Audio:
-                    this.FadeIn(audioCg, delay, () =>
+                    SetUI.Set(this.audioCg, true, 0f, delay/2, () =>
                     {
-                        audioCg.interactable = true;
-                        audioCg.blocksRaycasts = true;
+                        this.audioCg.interactable = true;
+                        this.audioCg.blocksRaycasts = true;
                     });
                     break;
             }
         }
-    }
-
-    void FadeOut(CanvasGroup cg, float delay, Action onComplete = null)
-    {
-        cg?.DOFade(0f, 0f).SetDelay(delay / 2).OnComplete(()=> onComplete());
-    }
-
-    void FadeIn(CanvasGroup cg, float delay, Action onComplete = null)
-    {
-        cg?.DOFade(1f, 0f).SetDelay(delay / 2).OnComplete(() => onComplete());
     }
 
     public void Flick(bool status, float delay=0f, Action OnCompleted = null)
@@ -234,12 +218,22 @@ public class Card : MonoBehaviour
 
     public void AddPointerClickEvent(UnityAction<BaseEventData> action)
     {
-        EventTrigger.Entry entry = new EventTrigger.Entry
+        if (this.eventTrigger == null)
         {
-            eventID = EventTriggerType.PointerClick
-        };
-        entry.callback.AddListener(action);
-        this.eventTrigger.triggers.Add(entry);
+            LogController.Instance.debugError("EventTrigger is not initialized.");
+            return;
+        }
+
+        // Ensure action is not null
+        if (action != null)
+        {
+            this.entry.callback.AddListener(action);
+            this.eventTrigger.triggers.Add(this.entry);
+        }
+        else
+        {
+            LogController.Instance.debugError("Action cannot be null.");
+        }
     }
 
     private void OnCardClicked(BaseEventData eventData)
