@@ -178,7 +178,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: e97eae764e66eda408e10a25bf7361c7, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -414,12 +414,10 @@ MonoBehaviour:
     gamePreview: {fileID: 0}
     instructions: {fileID: 0}
     gameTime: 300
-    playersMovingSpeed: 5
-    playersRotationSpeed: 200
     retry_times: 3
-    objectAverageSpeed: 2
     showFPS: 0
     playerNumber: 1
+    pairOfEachPage: 4
   apiManager:
     jwt: 
     appId: 
@@ -448,6 +446,7 @@ MonoBehaviour:
       gameTime: 0
       playerNumber: 0
       grid_image: 
+      pairOfEachPage: 0
     maxRetries: 10
     debugLayer: {fileID: 1630735626}
     loginErrorBox: {fileID: 645755778}

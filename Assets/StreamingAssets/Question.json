@@ -239,6 +239,48 @@
       "questionType": "picture",
       "question": "Highlighter",
       "correctAnswer": "Highlighter"
+    },
+    {
+      "qid": "p1u4-c1",
+      "questionType": "picture",
+      "question": "Window",
+      "correctAnswer": "Window"
+    },
+    {
+      "qid": "p1u4-c2",
+      "questionType": "picture",
+      "question": "Light",
+      "correctAnswer": "Light"
+    },
+    {
+      "qid": "p1u4-c3",
+      "questionType": "picture",
+      "question": "Fan",
+      "correctAnswer": "Fan"
+    },
+    {
+      "qid": "p1u4-c4",
+      "questionType": "picture",
+      "question": "Board",
+      "correctAnswer": "Board"
+    },
+    {
+      "qid": "p1u4-c5",
+      "questionType": "picture",
+      "question": "Bin",
+      "correctAnswer": "Bin"
+    },
+    {
+      "qid": "p1u4-c6",
+      "questionType": "picture",
+      "question": "Shelf",
+      "correctAnswer": "Shelf"
+    },
+    {
+      "qid": "p1u4-c7",
+      "questionType": "picture",
+      "question": "Duster",
+      "correctAnswer": "Duster"
     }
   ]
 }

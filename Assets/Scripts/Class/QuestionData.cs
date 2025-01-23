@@ -34,6 +34,7 @@ public class QuestionList
     public string[] media;
     public Texture texture;
     public AudioClip audioClip;
+    public bool isDone = false;
 }
 
 [Serializable]

@@ -17,6 +17,7 @@ public class GameController : GameBaseController
     public TextMeshProUGUI choiceText;
     public int numberOfQuestions = 4;
     public GameStatus gameStatus = GameStatus.ready;
+    public bool updateNextQA = false;
 
     protected override void Awake()
     {
@@ -34,7 +35,8 @@ public class GameController : GameBaseController
     {       
         Sprite cardImage = LoaderConfig.Instance.gameSetup.gridTexture != null ?
                             SetUI.ConvertTextureToSprite(LoaderConfig.Instance.gameSetup.gridTexture as Texture2D) : null;
-        
+
+        this.numberOfQuestions = LoaderConfig.Instance.gameSetup.pairOfEachPage;
         this.cardManager.CreateCard(this.numberOfQuestions, cardImage);
     }
 
@@ -134,16 +136,18 @@ public class GameController : GameBaseController
 
     public void PrepareNextQuestion()
     {
-        StartCoroutine(this.delayToNextPage(2.0f));
+        if (!this.updateNextQA)
+        {
+            LogController.Instance?.debug("Prepare Next Question");
+            this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager);
+            this.playersReset();
+            this.updateNextQA = true;
+            StartCoroutine(this.delayToNextPage(2.0f));
+        }
     }
 
     IEnumerator delayToNextPage(float _delay = 0f)
     {
-        if(this.gameStatus == GameStatus.endgame) yield return null;
-        this.gameStatus = GameStatus.changePage;
-        LogController.Instance?.debug("Prepare Next Question");
-        this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager);
-        this.playersReset();
         yield return new WaitForSeconds(_delay);
         this.gameStatus = GameStatus.ready;
     }
@@ -186,6 +190,7 @@ public class GameController : GameBaseController
             else
             {
                 this.cardManager.CheckingCardStatus(this.gameTimer, this.playerControllers[0], this.questionController);
+                this.updateNextQA = false;
             }
 
         }

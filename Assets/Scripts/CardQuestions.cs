@@ -18,7 +18,7 @@ public class CardQuestions : MonoBehaviour
         LogController.Instance?.debug("next question page");
     }
 
-    public void GetAllQuestionAnswers(int numberOfQuestions = 0, GenerateCard cardManager=null)
+    public void GetAllQuestionAnswers(int numberOfQuestions = 0, GenerateCard cardManager = null)
     {
         if (LoaderConfig.Instance == null || QuestionManager.Instance == null)
             return;
@@ -32,44 +32,52 @@ public class CardQuestions : MonoBehaviour
             {
                 return;
             }
-            
-            this.cardPages.totalPages = questionDataList.questions.Count / numberOfQuestions;
+
+            // Adjusted line to calculate total pages including any remainder
+            this.cardPages.totalPages = (questionDataList.questions.Count + numberOfQuestions - 1) / numberOfQuestions;
             this.cardPages.pages = new List<Cards>();
 
-            for (int i=0; i< this.cardPages.totalPages; i++)
+            for (int i = 0; i < this.cardPages.totalPages; i++)
             {
                 var _cards = new Cards();
                 _cards.name = "Page_" + i;
                 for (int j = 0; j < numberOfQuestions; j++)
                 {
+                    // Ensure we do not exceed the questions available
+                    if ((i * numberOfQuestions) + j >= this.totalQuestions)
+                        break;
+
                     QuestionList _qa = questionDataList.questions[(i * numberOfQuestions) + j];
-                    _cards.qa.Add(_qa);
-
-                    // First card for the question content
-                    switch (_qa.questionType)
-                    {
-                        case "picture":
-                            cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
-                            break;
-                        case "audio":
-                            cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
-                            break;
-                        case "text":
-                            cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
-                            break;
-                        case "fillInBlank":
-                            // You can add specific logic for fill-in-the-blank if needed
-                            break;
-                    }
-
-                    // Second card for the correct answer
-                    cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
+                    _cards.qa.Add(_qa);                  
                 }
                 this.cardPages.pages.Add(_cards);
             }
 
-            cardManager.ShuffleGridElements(); // sort the layout
-            cardManager.remainQuestions = numberOfQuestions;
+
+            var firstPageCards = this.cardPages.pages[this.cardPages.currentPage];
+            int actualQuestionNumber = firstPageCards.qa.Count;
+            for (int j = 0; j < actualQuestionNumber; j++)
+            {
+                QuestionList _qa = firstPageCards.qa[j];
+                switch (_qa.questionType)
+                {
+                    case "picture":
+                        cardManager.cards[j * 2].setContent(CardType.Image, _qa.correctAnswer, _qa.texture, null, _qa.correctAnswer, _qa.qid, _qa);
+                        break;
+                    case "audio":
+                        cardManager.cards[j * 2].setContent(CardType.Audio, _qa.correctAnswer, null, _qa.audioClip, _qa.correctAnswer, _qa.qid, _qa);
+                        break;
+                    case "text":
+                        cardManager.cards[j * 2].setContent(CardType.Text, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
+                        break;
+                    case "fillInBlank":
+                        // You can add specific logic for fill-in-the-blank if needed
+                        break;
+                }
+                cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
+            }
+
+            cardManager.ShuffleGridElements(numberOfQuestions);
             this.setProgressiveBar(true);
         }
         catch (Exception e)
@@ -78,10 +86,9 @@ public class CardQuestions : MonoBehaviour
         }
     }
 
-    public void GetNewPageQuestions(int numberOfQuestions = 0, GenerateCard cardManager = null)
+    public void GetNewPageQuestions(int numberOfQuestions=0, GenerateCard cardManager = null)
     {
-
-        if (this.cardPages.currentPage < this.cardPages.totalPages - 1)
+        if (this.cardPages.currentPage < this.cardPages.totalPages-1)
         {
             this.cardPages.currentPage += 1;
         }
@@ -91,8 +98,38 @@ public class CardQuestions : MonoBehaviour
         }
 
         var newPageCards = this.cardPages.pages[this.cardPages.currentPage];
+        int actualQuestionNumber = newPageCards.qa.Count;
 
-        for (int j = 0; j < numberOfQuestions; j++)
+        if(actualQuestionNumber < numberOfQuestions)
+        {
+            int neededQuestions = numberOfQuestions - actualQuestionNumber;
+            List<QuestionList> availableQuestions = new List<QuestionList>();
+
+            for (int i = 0; i < this.cardPages.currentPage; i++)
+            {
+                availableQuestions.AddRange(this.cardPages.pages[i].qa);
+            }
+
+            HashSet<QuestionList> selectedQuestions = new HashSet<QuestionList>();
+            System.Random rand = new System.Random();
+            while (selectedQuestions.Count < neededQuestions && availableQuestions.Count > 0)
+            {
+                int index = rand.Next(availableQuestions.Count);
+                QuestionList selectedQuestion = availableQuestions[index];
+                if (selectedQuestions.Add(selectedQuestion))
+                {
+                    newPageCards.qa.Add(selectedQuestion);
+                }
+                availableQuestions.RemoveAt(index);
+            }
+            actualQuestionNumber = newPageCards.qa.Count;
+        }
+        else
+        {
+            actualQuestionNumber = numberOfQuestions;
+        }
+
+        for (int j = 0; j < actualQuestionNumber; j++)
         {
             QuestionList _qa = newPageCards.qa[j];
             switch (_qa.questionType)
@@ -113,9 +150,9 @@ public class CardQuestions : MonoBehaviour
             cardManager.cards[j * 2 + 1].setContent(CardType.Answer, _qa.correctAnswer, null, null, _qa.correctAnswer, _qa.qid, _qa);
         }
 
-        cardManager.ShuffleGridElements();
-        cardManager.remainQuestions = numberOfQuestions;
+        cardManager.ShuffleGridElements(numberOfQuestions);
         cardManager.ResetAllCards(1f);
+
     }
 
     public void setProgressiveBar(bool status)
@@ -164,8 +201,6 @@ public class Cards
 {
     public string name;
     public List<QuestionList> qa = new List<QuestionList>();
-    public List<Card> cards = new List<Card>();
-    public bool isStayed = false;
 }
 
 [Serializable]
@@ -174,4 +209,12 @@ public class CardPages
     public int totalPages = 0;
     public int currentPage = 0;
     public List<Cards> pages;
+
+    public List<QuestionList> currentPageQuestions
+    {
+        get
+        {
+            return this.pages[this.currentPage].qa;
+        }
+    }
 }

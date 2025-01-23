@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class GenerateCard
@@ -15,24 +16,49 @@ public class GenerateCard
     public List<Card> flickedCards = new List<Card>();
     public List<Card> cards = new List<Card>();
     public int remainQuestions = 0;
+    public int answeredQuestionsCount = 0;
+    private Vector2 originalGridLayoutSpacing = Vector2.zero;
 
-    private void CalculateCellSize()
+    private void CalculateCellSize(int questionsNumber)
     {
         if(this.gridLayoutGroup != null)
         {
             float totalWidth = this.gridLayoutGroup.GetComponent<RectTransform>().rect.width;
             float totalHeight = this.gridLayoutGroup.GetComponent<RectTransform>().rect.height;
-            int maxColumns = Mathf.CeilToInt((float)totalCards * 2 / maxRowCount);
+            int maxColumns = Mathf.CeilToInt((float)questionsNumber * 2 / maxRowCount);
             float cellWidth = (totalWidth - (this.gridLayoutGroup.spacing.x * (maxColumns - 1))) / maxColumns;
             float cellHeight = (totalHeight - (this.gridLayoutGroup.spacing.y * (maxRowCount - 1))) / maxRowCount;
-            this.gridLayoutGroup.cellSize = new Vector2(cellWidth, cellHeight);
+
+            if (questionsNumber > 4)
+            {
+                float spacing = Mathf.Clamp(questionsNumber * 20, 0f, 110f);
+                this.OriginalGridLayoutSpacing = new Vector2(spacing, this.gridLayoutGroup.spacing.y);
+                this.gridLayoutGroup.cellSize = new Vector2(cellWidth, cellHeight);
+            }
+            else
+            {
+                this.OriginalGridLayoutSpacing = new Vector2(100f, this.gridLayoutGroup.spacing.y);
+                this.gridLayoutGroup.cellSize = new Vector2(360f, 538f);
+            }
+            this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
+        }
+    }
+
+    Vector2 OriginalGridLayoutSpacing
+    {
+        set { 
+            this.originalGridLayoutSpacing = value;
+        }
+        get
+        {
+            return this.originalGridLayoutSpacing;
         }
     }
 
     public void CreateCard(int questionsNumber = 0, Sprite cardSprite = null)
     {
-        this.totalCards = questionsNumber;
-        this.CalculateCellSize();
+        this.totalCards = questionsNumber * 2;
+        this.CalculateCellSize(questionsNumber);
         this.flickedCards.Clear();
         this.cards.Clear();
         int totalCells = questionsNumber * 2;
@@ -92,14 +118,7 @@ public class GenerateCard
                                            this.flickedCards[1].question,
                                            () => 
                                            {
-                                               if(questionController != null)
-                                               {
-                                                   bool updating = questionController.updateProgressiveBar();
-                                                   if (updating)
-                                                   {
-                                                       this.RemovPairedCards();
-                                                   }
-                                               }
+                                               this.RemovPairedCards(questionController);
                                            },
                                            () =>
                                            {
@@ -119,9 +138,28 @@ public class GenerateCard
         }  
     }
 
-    public void RemovPairedCards()
+    public void RemovPairedCards(CardQuestions questionController = null)
     {
-        LogController.Instance?.debug("Suceess paired, paired will be remove");
+        if (!this.flickedCards[0].question.isDone && 
+            !this.flickedCards[1].question.isDone)
+        {
+            if (questionController != null)
+            {
+                bool updating = questionController.updateProgressiveBar();
+                if (updating)
+                {
+                    LogController.Instance?.debug("Suceess paired, paired will be remove");
+                    var qaList = questionController.cardPages.currentPageQuestions;
+                    for (int i = 0; i < qaList.Count; i++)
+                    {
+                        if (this.flickedCards[0].qid == qaList[i].qid)
+                        {
+                            qaList[i].isDone = true;
+                        }
+                    }
+                }
+            }
+        }
 
         foreach(var card in this.cards)
         {
@@ -133,6 +171,11 @@ public class GenerateCard
 
         if(this.remainQuestions > 0)
         {
+            this.answeredQuestionsCount += 1;
+
+            float spacing = this.originalGridLayoutSpacing.x + (this.answeredQuestionsCount * 25f);
+            this.gridLayoutGroup.spacing = new Vector2(spacing, this.originalGridLayoutSpacing.y);
+
             this.remainQuestions -= 1;
         }
 
@@ -158,6 +201,7 @@ public class GenerateCard
 
     public void ResetAllCards(float delay=0f)
     {
+        this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
         LogController.Instance?.debug("All Cards are reset");
         this.flickedCardNumber = 0;
         this.flickedCards.Clear();
@@ -168,7 +212,7 @@ public class GenerateCard
         this.cardsStatus = CardsStatus.ready;
     }
 
-    public void ShuffleGridElements()
+    public void ShuffleGridElements(int numberOfQuestions)
     {
         int childCount = this.gridLayoutGroup.transform.childCount;
         Transform[] children = new Transform[childCount];
@@ -191,6 +235,8 @@ public class GenerateCard
         }
         LayoutRebuilder.ForceRebuildLayoutImmediate(this.gridLayoutGroup.GetComponent<RectTransform>());
         this.cardsStatus = CardsStatus.ready;
+        this.remainQuestions = numberOfQuestions;
+        this.answeredQuestionsCount = 0;
     }
 
 }

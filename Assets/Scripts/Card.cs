@@ -172,7 +172,7 @@ public class Card : MonoBehaviour
 
             if (status)
             {
-                this.cardImage.DOScale(1.1f, 0.5f).OnComplete(() =>
+                this.cardImage.DOScale(1.08f, 0.5f).OnComplete(() =>
                 {
                     this.cardImage.DOBlendableRotateBy(new Vector3(0, -this.flickAngle, 0), this.flickDuration).SetEase(this.easeType).SetDelay(delay).OnPlay(() =>
                     {

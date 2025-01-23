@@ -8,6 +8,7 @@ public class GameSettings : Settings
     //public string frameImageUrl_P1;
     //public string frameImageUrl_P2;
     public string grid_image;
+    public int pairOfEachPage;
     //public string normal_color;
     //public string pressed_color;
 }
@@ -31,6 +32,10 @@ public static class SetParams
             settings.playerNumber = jsonNode["setting"]["player_number"] != null ? jsonNode["setting"]["player_number"] : null;
 
             LoaderConfig.Instance.gameSetup.playerNumber = settings.playerNumber;
+
+            settings.pairOfEachPage = jsonNode["setting"]["pair_number"] != null ? jsonNode["setting"]["pair_number"] : 5;
+
+            LoaderConfig.Instance.gameSetup.pairOfEachPage = settings.pairOfEachPage;
 
             /*this.settings.normal_color = jsonNode["setting"]["normal_color"] != null ?
                 jsonNode["setting"]["normal_color"].ToString().Replace("\"", "") : null;

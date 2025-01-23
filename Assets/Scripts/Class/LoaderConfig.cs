@@ -24,24 +24,15 @@ public class LoaderConfig : GameSetting
     protected override void Update()
     {
         base.Update();
-
-
     }
 
     public void LoadGameData()
     {
-        RegisterCustomHandler("mSpeed", (value) =>
+        RegisterCustomHandler("pairs", (value) =>
         {
-            float playerMovingSpeed = float.Parse(value);
-            this.gameSetup.playersMovingSpeed = playerMovingSpeed;
-            LogController.Instance?.debug("Player moving speed: " + this.gameSetup.playersMovingSpeed);
-        });
-
-        RegisterCustomHandler("rSpeed", (value) =>
-        {
-            float playerRotationSpeed = float.Parse(value);
-            this.gameSetup.playersRotationSpeed = playerRotationSpeed;
-            LogController.Instance?.debug("Player rotation speed: " + this.gameSetup.playersRotationSpeed);
+            int pairOfEachPage = int.Parse(value);
+            this.gameSetup.pairOfEachPage = pairOfEachPage;
+            LogController.Instance?.debug("Pairs of each page: " + this.gameSetup.pairOfEachPage);
         });
 
         this.apiManager.PostGameSetting(this.GetParseURLParams,

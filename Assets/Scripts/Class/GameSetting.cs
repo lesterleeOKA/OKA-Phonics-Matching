@@ -255,13 +255,15 @@ public class GameSetup : LoadImage
     public RawImage gamePreview;
     public InstructionText instructions;
     public float gameTime;
-    public float playersMovingSpeed = 3f;
-    public float playersRotationSpeed = 200f;
+    //public float playersMovingSpeed = 3f;
+    //public float playersRotationSpeed = 200f;
     public int retry_times = 3;
-    [Range(1, 3)]
-    public int objectAverageSpeed;
+   // [Range(1, 3)]
+  //  public int objectAverageSpeed;
     public bool showFPS = false;
     public int playerNumber = 1;
+    [Range(2, 6)]
+    public int pairOfEachPage = 5;
 
     public void setBackground()
     {
