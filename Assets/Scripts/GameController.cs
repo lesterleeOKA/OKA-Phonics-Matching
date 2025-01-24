@@ -18,6 +18,7 @@ public class GameController : GameBaseController
     public int numberOfQuestions = 4;
     public GameStatus gameStatus = GameStatus.ready;
     public bool updateNextQA = false;
+    public float durationOfRememberCards = 3f;
 
     protected override void Awake()
     {
@@ -46,7 +47,7 @@ public class GameController : GameBaseController
         this.questionController.GetAllQuestionAnswers(this.numberOfQuestions, this.cardManager);
         yield return new WaitForEndOfFrame();
         this.createPlayer();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(this.durationOfRememberCards);
         this.cardManager.ResetAllCards();
         this.gameStatus = GameStatus.ready;
     }
@@ -131,10 +132,10 @@ public class GameController : GameBaseController
         if (!this.updateNextQA)
         {
             LogController.Instance?.debug("Prepare Next Question");
-            this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager);
+            this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager, this.durationOfRememberCards);
             this.playersReset();
             this.updateNextQA = true;
-            StartCoroutine(this.delayToNextPage(2.0f));
+            StartCoroutine(this.delayToNextPage(this.durationOfRememberCards));
         }
     }
 

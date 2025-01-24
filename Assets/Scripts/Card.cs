@@ -18,6 +18,7 @@ public enum CardType
 public class Card : MonoBehaviour
 {
     public string qid = "";
+    public bool isDone = false;
     public QuestionList question;
     public CardType type = CardType.Text;
     public CardStatus cardStatus = CardStatus.hidden;
@@ -128,9 +129,9 @@ public class Card : MonoBehaviour
         if(this.textCg == null || this.imageCg == null || this.audioCg == null) return;
         this.cardStatus = status ? CardStatus.flicked : CardStatus.hidden;
         SetUI.Set(this.particleEffect, status, 1f);
-        SetUI.Set(this.textCg, false, 0f, delay/2);
-        SetUI.Set(this.imageCg, false, 0f, delay/2);
-        SetUI.Set(this.audioCg, false, 0f, delay/2, () =>
+        SetUI.Set(this.textCg, false, 0f, delay);
+        SetUI.Set(this.imageCg, false, 0f, delay);
+        SetUI.Set(this.audioCg, false, 0f, delay, () =>
         {
             if (this.audioCg != null)
             {
@@ -145,13 +146,13 @@ public class Card : MonoBehaviour
             {
                 case CardType.Text:
                 case CardType.Answer:
-                    SetUI.Set(this.textCg, true, 0f, delay/2);
+                    SetUI.Set(this.textCg, true, 0f, delay);
                     break;
                 case CardType.Image:
-                    SetUI.Set(this.imageCg, true, 0f, delay/2);
+                    SetUI.Set(this.imageCg, true, 0f, delay);
                     break;
                 case CardType.Audio:
-                    SetUI.Set(this.audioCg, true, 0f, delay/2, () =>
+                    SetUI.Set(this.audioCg, true, 0f, delay, () =>
                     {
                         this.audioCg.interactable = true;
                         this.audioCg.blocksRaycasts = true;
@@ -171,7 +172,7 @@ public class Card : MonoBehaviour
         {
             this.isAnimated = true;
             this.cardImage.DOKill();
-            this.setElements(status, this.flickDuration + 0.5f + delay);
+            this.setElements(status, delay + (this.flickDuration / 2f));
 
             if (status)
             {
@@ -211,12 +212,14 @@ public class Card : MonoBehaviour
     public void ResetFlick(float delay=0f)
     {
         this.cardStatus = CardStatus.reset;
+        this.isDone = false;
         this.Flick(false, delay);
     }
 
     public void dissolveCard()
     {
-        this.gameObject.SetActive(false);
+        this.isDone = true;
+        //this.gameObject.SetActive(false);
     }
 
     public void AddPointerClickEvent(UnityAction<BaseEventData> action)

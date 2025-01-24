@@ -86,7 +86,7 @@ public class CardQuestions : MonoBehaviour
         }
     }
 
-    public void GetNewPageQuestions(int numberOfQuestions=0, GenerateCard cardManager = null)
+    public void GetNewPageQuestions(int numberOfQuestions=0, GenerateCard cardManager = null, float delayResetCards=1f)
     {
         if (this.cardPages.currentPage < this.cardPages.totalPages-1)
         {
@@ -151,7 +151,7 @@ public class CardQuestions : MonoBehaviour
         }
 
         cardManager.ShuffleGridElements(numberOfQuestions);
-        cardManager.ResetAllCards(1f);
+        cardManager.ResetAllCards(delayResetCards);
 
     }
 

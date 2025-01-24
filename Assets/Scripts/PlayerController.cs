@@ -135,7 +135,6 @@ public class PlayerController : UserData
 
                     if (this.IsCorrect)
                     {
-                        LogController.Instance?.debug("Correct FKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
                         this.answeredQuestion += 1;
                         progress = (int)((float)this.answeredQuestion / QuestionManager.Instance.totalItems * 100);
                         if (this.CorrectedAnswerNumber < QuestionManager.Instance.totalItems)

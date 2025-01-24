@@ -131,6 +131,10 @@ public class GenerateCard
             case CardsStatus.checking:
                 LogController.Instance?.debug("Cards are checking the matching");
                 break;
+            case CardsStatus.paired:
+                this.disablePairedCards();
+                if (player != null) player.playerReset();
+                break;
             case CardsStatus.reset:
                 this.ResetFlickedCards();
                 if(player != null) player.playerReset();
@@ -176,7 +180,22 @@ public class GenerateCard
         }
 
 
-        this.cardsStatus = CardsStatus.reset;
+        this.cardsStatus = CardsStatus.paired;
+    }
+
+    public void disablePairedCards()
+    {
+        LogController.Instance?.debug("Disable Paired Cards");
+        for (int i = 0; i < this.cards.Count; i++)
+        {
+            if (this.cards[i] != null && !this.cards[i].isDone)
+            {
+                this.cards[i].cardStatus = CardStatus.hidden;
+            }
+        }
+        this.flickedCardNumber = 0;
+        this.flickedCards.Clear();
+        this.cardsStatus = CardsStatus.ready;
     }
 
     public void ResetFlickedCards()
@@ -186,13 +205,7 @@ public class GenerateCard
         {
             this.flickedCards[i].ResetFlick();
         }
-        this.flickedCardNumber = 0;
-        this.flickedCards.Clear();
-        for (int i = 0; i < this.cards.Count; i++)
-        {
-            this.cards[i].cardStatus = CardStatus.hidden;
-        }
-        this.cardsStatus = CardsStatus.ready;
+        this.disablePairedCards();
     }
 
     public void ResetAllCards(float delay=0f)
@@ -203,7 +216,7 @@ public class GenerateCard
         this.flickedCards.Clear();
         for (int i = 0; i < this.cards.Count; i++)
         {
-            this.cards[i].ResetFlick(delay);
+            this.cards[i].ResetFlick(delay - 1f);
         }
         this.cardsStatus = CardsStatus.ready;
     }
@@ -242,5 +255,6 @@ public enum CardsStatus
 {
     ready,
     checking,
+    paired,
     reset
 }
