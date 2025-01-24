@@ -25,22 +25,22 @@ public class GenerateCard
         {
             float totalWidth = this.gridLayoutGroup.GetComponent<RectTransform>().rect.width;
             float totalHeight = this.gridLayoutGroup.GetComponent<RectTransform>().rect.height;
-            int maxColumns = Mathf.CeilToInt((float)questionsNumber * 2 / maxRowCount);
-            float cellWidth = (totalWidth - (this.gridLayoutGroup.spacing.x * (maxColumns - 1))) / maxColumns;
+            float cellWidth = (totalWidth - (this.gridLayoutGroup.spacing.x * (questionsNumber - 1))) / questionsNumber;
             float cellHeight = (totalHeight - (this.gridLayoutGroup.spacing.y * (maxRowCount - 1))) / maxRowCount;
 
             if (questionsNumber > 4)
             {
                 float spacing = Mathf.Clamp(questionsNumber * 20, 0f, 110f);
-                this.OriginalGridLayoutSpacing = new Vector2(spacing, this.gridLayoutGroup.spacing.y);
+                //this.OriginalGridLayoutSpacing = new Vector2(spacing, this.gridLayoutGroup.spacing.y);
                 this.gridLayoutGroup.cellSize = new Vector2(cellWidth, cellHeight);
             }
             else
             {
-                this.OriginalGridLayoutSpacing = new Vector2(100f, this.gridLayoutGroup.spacing.y);
-                this.gridLayoutGroup.cellSize = new Vector2(360f, 538f);
+                //this.OriginalGridLayoutSpacing = new Vector2(100f, this.gridLayoutGroup.spacing.y);
+                this.gridLayoutGroup.cellSize = new Vector2(400f, 538f);
             }
-            this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
+           // this.OriginalGridLayoutSpacing = this.gridLayoutGroup.spacing;
+           // this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
         }
     }
 
@@ -201,7 +201,7 @@ public class GenerateCard
 
     public void ResetAllCards(float delay=0f)
     {
-        this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
+        //this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
         LogController.Instance?.debug("All Cards are reset");
         this.flickedCardNumber = 0;
         this.flickedCards.Clear();
