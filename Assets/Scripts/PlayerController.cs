@@ -123,9 +123,9 @@ public class PlayerController : UserData
                                                  eachQAScore);
             this.Score = resultScore;
             this.IsCorrect = this.scoring.correct;
-            StartCoroutine(this.showAnswerResult(this.scoring.correct,()=>
+            StartCoroutine(this.showAnswerResult(this.IsCorrect, ()=>
             {
-                if (this.UserId == 0 && loader != null && loader.apiManager.IsLogined) // For first player
+                if (this.UserId == 0 && loader != null && loader.apiManager.IsLogined && this.IsCorrect) // For first player
                 {
                     float currentQAPercent = 0f;
                     int correctId = 0;
@@ -133,8 +133,9 @@ public class PlayerController : UserData
                     float answeredPercentage;
                     int progress = 0;
 
-                    if (this.answer == pairAnswer)
+                    if (this.IsCorrect)
                     {
+                        LogController.Instance?.debug("Correct FKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
                         this.answeredQuestion += 1;
                         progress = (int)((float)this.answeredQuestion / QuestionManager.Instance.totalItems * 100);
                         if (this.CorrectedAnswerNumber < QuestionManager.Instance.totalItems)
@@ -163,7 +164,7 @@ public class PlayerController : UserData
                         answeredPercentage = 100f;
                     }
 
-                    var onCompleted = this.answer == pairAnswer? successCalled : failureCalled;
+                    var onCompleted = this.IsCorrect ? successCalled : failureCalled;
 
                     loader.SubmitAnswer(
                                currentTime,
@@ -183,7 +184,7 @@ public class PlayerController : UserData
                 }
                 else
                 {
-                    if (this.answer == pairAnswer) 
+                    if (this.IsCorrect) 
                         successCalled?.Invoke();
                     else
                         failureCalled?.Invoke();
