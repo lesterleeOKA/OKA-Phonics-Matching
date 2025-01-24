@@ -97,7 +97,7 @@ public class Card : MonoBehaviour
                     var width = this.qaImage.GetComponent<RectTransform>().sizeDelta.x;
                     var height = this.qaImage.GetComponent<RectTransform>().sizeDelta.y;
 
-                    if (_picture.width >= _picture.height)
+                    /*if (_picture.width >= _picture.height)
                     {
                         aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
                         //this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(335f, height);
@@ -108,7 +108,9 @@ public class Card : MonoBehaviour
                         aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
                         //this.qaImage.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 450f);
                         aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
-                    }
+                    }*/
+                    aspecRatioFitter.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+                    aspecRatioFitter.aspectRatio = (float)_picture.width / (float)_picture.height;
                     this.qaImage.texture = _picture;
                 }
                 break;

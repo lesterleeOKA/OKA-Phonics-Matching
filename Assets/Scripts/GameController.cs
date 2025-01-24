@@ -92,14 +92,6 @@ public class GameController : GameBaseController
                     }
                     //notUsedPlayerIcon.SetActive(false);
                 }
-
-                var notUsedPlayerController = GameObject.FindGameObjectWithTag("P" + notUsedId + "-controller");
-                if (notUsedPlayerController != null)
-                {
-                    var notUsedMoveController = notUsedPlayerController.GetComponent<CharacterMoveController>();
-                    notUsedMoveController.TriggerActive(false);
-                }
-                // notUsedPlayerController.SetActive(false);
             }
         }
     }

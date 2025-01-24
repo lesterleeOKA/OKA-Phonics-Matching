@@ -29,9 +29,8 @@ public static class SetParams
             string grid_image = jsonNode["setting"]["grid_image"] != null ?
                 jsonNode["setting"]["grid_image"].ToString().Replace("\"", "") : null;
 
-            settings.playerNumber = jsonNode["setting"]["player_number"] != null ? jsonNode["setting"]["player_number"] : null;
-
-            LoaderConfig.Instance.gameSetup.playerNumber = settings.playerNumber;
+            //settings.playerNumber = jsonNode["setting"]["player_number"] != null ? jsonNode["setting"]["player_number"] : null;
+            //LoaderConfig.Instance.gameSetup.playerNumber = settings.playerNumber;
 
             settings.pairOfEachPage = jsonNode["setting"]["pair_number"] != null ? jsonNode["setting"]["pair_number"] : 5;
 

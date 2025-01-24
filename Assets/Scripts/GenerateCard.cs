@@ -172,10 +172,6 @@ public class GenerateCard
         if(this.remainQuestions > 0)
         {
             this.answeredQuestionsCount += 1;
-
-            float spacing = this.originalGridLayoutSpacing.x + (this.answeredQuestionsCount * 25f);
-            this.gridLayoutGroup.spacing = new Vector2(spacing, this.originalGridLayoutSpacing.y);
-
             this.remainQuestions -= 1;
         }
 

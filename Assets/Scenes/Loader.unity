@@ -444,7 +444,7 @@ MonoBehaviour:
       backgroundImageUrl: 
       instructionContent: 
       gameTime: 0
-      playerNumber: 0
+      playerNumber: 1
       grid_image: 
       pairOfEachPage: 0
     maxRetries: 10
