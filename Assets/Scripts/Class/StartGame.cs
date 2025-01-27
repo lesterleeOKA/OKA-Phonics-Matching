@@ -51,8 +51,6 @@ public class StartGame : MonoBehaviour
                     lastPlayTime = Time.time;
                 }
 
-                
-
                 //if (LogController.Instance != null) LogController.Instance.debug("prepare counting:" + this.count);
             }
             else

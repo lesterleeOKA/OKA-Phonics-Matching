@@ -55,7 +55,7 @@ public class GenerateCard
         }
     }
 
-    public void CreateCard(int questionsNumber = 0, Sprite cardSprite = null)
+    public void CreateCard(int questionsNumber = 0, Texture _cardFrontTex = null, Texture _cardBackTex = null)
     {
         this.totalCards = questionsNumber * 2;
         this.CalculateCellSize(questionsNumber);
@@ -73,7 +73,7 @@ public class GenerateCard
             if (card != null)
             {
                 card.OnCardClick += FlickedNumberOfCard;
-                card.setCardImage(cardSprite);
+                card.setCardImage(_cardFrontTex, _cardBackTex);
                 this.cards.Add(card);
             }
         }
@@ -208,7 +208,7 @@ public class GenerateCard
         this.disablePairedCards();
     }
 
-    public void ResetAllCards(float delay=0f)
+    public void ResetAllCards()
     {
         //this.gridLayoutGroup.spacing = this.OriginalGridLayoutSpacing;
         LogController.Instance?.debug("All Cards are reset");
@@ -216,7 +216,7 @@ public class GenerateCard
         this.flickedCards.Clear();
         for (int i = 0; i < this.cards.Count; i++)
         {
-            this.cards[i].ResetFlick(delay - 1f);
+            this.cards[i].ResetFlick();
         }
         this.cardsStatus = CardsStatus.ready;
     }

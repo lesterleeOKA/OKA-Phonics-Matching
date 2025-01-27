@@ -16,9 +16,10 @@ public class GameController : GameBaseController
     public CanvasGroup[] audioTypeButtons, fillInBlankTypeButtons;
     public TextMeshProUGUI choiceText;
     public int numberOfQuestions = 4;
-    public GameStatus gameStatus = GameStatus.ready;
+    public GameStatus gameStatus = GameStatus.readCards;
     public bool updateNextQA = false;
     public float durationOfRememberCards = 3f;
+    public Clock timerOfOpenCard;
 
     protected override void Awake()
     {
@@ -34,22 +35,29 @@ public class GameController : GameBaseController
 
     void CreateGrids()
     {       
-        Sprite cardImage = LoaderConfig.Instance.gameSetup.gridTexture != null ?
-                            SetUI.ConvertTextureToSprite(LoaderConfig.Instance.gameSetup.gridTexture as Texture2D) : null;
+        Texture card_image_front = LoaderConfig.Instance.gameSetup.card_image_front != null ?
+                            LoaderConfig.Instance.gameSetup.card_image_front : null;
+
+        Texture card_image_bottom = LoaderConfig.Instance.gameSetup.card_image_bottom != null ?
+                    LoaderConfig.Instance.gameSetup.card_image_bottom : null;
 
         this.numberOfQuestions = LoaderConfig.Instance.gameSetup.pairOfEachPage;
-        this.cardManager.CreateCard(this.numberOfQuestions, cardImage);
+        this.durationOfRememberCards = LoaderConfig.Instance.gameSetup.timeToViewCards;
+        this.cardManager.CreateCard(this.numberOfQuestions, card_image_front, card_image_bottom);
     }
 
 
     private IEnumerator InitialQuestion()
     {
+        this.gameTimer.IsRunning = false;
         this.questionController.GetAllQuestionAnswers(this.numberOfQuestions, this.cardManager);
         yield return new WaitForEndOfFrame();
         this.createPlayer();
-        yield return new WaitForSeconds(this.durationOfRememberCards);
-        this.cardManager.ResetAllCards();
-        this.gameStatus = GameStatus.ready;
+        this.gameStatus = GameStatus.readCards;
+        if (this.timerOfOpenCard != null)
+        {
+            this.timerOfOpenCard.enabled = true;
+        }
     }
 
     void createPlayer()
@@ -134,14 +142,20 @@ public class GameController : GameBaseController
             LogController.Instance?.debug("Prepare Next Question");
             this.questionController.GetNewPageQuestions(this.numberOfQuestions, this.cardManager, this.durationOfRememberCards);
             this.playersReset();
+            this.gameTimer.IsRunning = false;
+            this.gameStatus = GameStatus.readCards;
+            if (this.timerOfOpenCard != null)
+            {
+                this.timerOfOpenCard.enabled = true;
+            }
             this.updateNextQA = true;
-            StartCoroutine(this.delayToNextPage(this.durationOfRememberCards));
         }
     }
 
-    IEnumerator delayToNextPage(float _delay = 0f)
+    public void ResetAllCards()
     {
-        yield return new WaitForSeconds(_delay);
+        this.gameTimer.IsRunning = true;
+        this.cardManager.ResetAllCards();
         this.gameStatus = GameStatus.ready;
     }
 
@@ -194,6 +208,7 @@ public class GameController : GameBaseController
 
 public enum GameStatus
 {
+    readCards,
     ready,
     changePage,
     endgame,

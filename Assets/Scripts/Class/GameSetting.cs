@@ -140,7 +140,8 @@ public class GameSetting : MonoBehaviour
         {
             this.apiManager.settings.backgroundImageUrl,
             this.apiManager.settings.previewGameImageUrl,
-            this.apiManager.settings.grid_image
+            this.apiManager.settings.card_image_front,
+            this.apiManager.settings.card_image_bottom,
         };
         imageUrls = imageUrls.Where(url => !string.IsNullOrEmpty(url)).ToList();
 
@@ -177,9 +178,13 @@ public class GameSetting : MonoBehaviour
             {
                 this.gameSetup.previewTexture = texture != null ? texture : null;
             }
-            else if (url == this.apiManager.settings.grid_image)
+            else if (url == this.apiManager.settings.card_image_front)
             {
-                this.gameSetup.gridTexture = texture != null ? texture : null;
+                this.gameSetup.card_image_front = texture != null ? texture : null;
+            }
+            else if (url == this.apiManager.settings.card_image_bottom)
+            {
+                this.gameSetup.card_image_bottom = texture != null ? texture : null;
             }
         }
 
@@ -247,19 +252,18 @@ public class GameSetup : LoadImage
     public Texture bgTexture;
     [Tooltip("Default Game Preview Texture")]
     public Texture previewTexture;
-    [Tooltip("Default grid Texture")]
-    public Texture gridTexture;
     [Tooltip("Find Tag name of GameBackground in different scene")]
     public RawImage gameBackground;
     [Tooltip("Instruction Preview Image")]
     public RawImage gamePreview;
+    [Tooltip("Default Card Front Texture")]
+    public Texture card_image_front;
+    [Tooltip("Default Card Bottom Texture")]
+    public Texture card_image_bottom;
     public InstructionText instructions;
     public float gameTime;
-    //public float playersMovingSpeed = 3f;
-    //public float playersRotationSpeed = 200f;
+    public float timeToViewCards;
     public int retry_times = 3;
-   // [Range(1, 3)]
-  //  public int objectAverageSpeed;
     public bool showFPS = false;
     public int playerNumber = 1;
     [Range(2, 6)]

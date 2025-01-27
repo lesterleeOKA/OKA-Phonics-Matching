@@ -13,6 +13,7 @@ public class Timer : MonoBehaviour
     [SerializeField]
     private Color32 pinkColor = Color.yellow;
     public bool endGame = false;
+    private bool isRunning = false;
     public UnityEvent finishedEvent;
     private AudioSource lastTenDingDing = null;
     private Tween timerScaleTween = null;
@@ -23,9 +24,15 @@ public class Timer : MonoBehaviour
         this.Init();
     }
 
+    public bool IsRunning
+    {
+        set { this.isRunning = value; }
+        get { return this.isRunning; }
+    }
+
     private void Update()
     {
-        if(this.timer == null)
+        if(this.timer == null || !this.IsRunning)
             return;
 
         if (StartGame.Instance.startedGame && this.timer != null && !this.endGame)
@@ -81,8 +88,8 @@ public class Timer : MonoBehaviour
     public void Init()
     {
         this.endGame = false;
-
-        if(LoaderConfig.Instance != null && LoaderConfig.Instance.GameTime > 0f) 
+        this.IsRunning = false;
+        if (LoaderConfig.Instance != null && LoaderConfig.Instance.GameTime > 0f) 
             this.currentTime = LoaderConfig.Instance.GameTime;
         else
             this.currentTime = this.gameDuration;

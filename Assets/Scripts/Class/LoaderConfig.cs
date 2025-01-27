@@ -35,6 +35,13 @@ public class LoaderConfig : GameSetting
             LogController.Instance?.debug("Pairs of each page: " + this.gameSetup.pairOfEachPage);
         });
 
+        RegisterCustomHandler("timeToViewCards", (value) =>
+        {
+            int timeToViewCards = int.Parse(value);
+            this.gameSetup.timeToViewCards = timeToViewCards;
+            LogController.Instance?.debug("Time To View Cards: " + this.gameSetup.timeToViewCards);
+        });
+
         this.apiManager.PostGameSetting(this.GetParseURLParams,
                                         () => StartCoroutine(this.apiManager.postGameSetting(this.LoadQuestions)),
                                         this.LoadQuestions

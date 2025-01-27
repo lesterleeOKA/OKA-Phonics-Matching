@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -409,15 +409,17 @@ MonoBehaviour:
     useGCCollect: 1
     bgTexture: {fileID: 2800000, guid: af8601fb93f11c048b13b70ef994994d, type: 3}
     previewTexture: {fileID: 2800000, guid: 185808da8779b7641b9ad8f61e9badb1, type: 3}
-    gridTexture: {fileID: 0}
     gameBackground: {fileID: 0}
     gamePreview: {fileID: 0}
+    card_image_front: {fileID: 0}
+    card_image_bottom: {fileID: 0}
     instructions: {fileID: 0}
-    gameTime: 300
+    gameTime: 0
+    timeToViewCards: 15
     retry_times: 3
     showFPS: 0
     playerNumber: 1
-    pairOfEachPage: 5
+    pairOfEachPage: 6
   apiManager:
     jwt: 
     appId: 
@@ -445,7 +447,9 @@ MonoBehaviour:
       instructionContent: 
       gameTime: 0
       playerNumber: 1
-      grid_image: 
+      timeToViewCards: 0
+      card_image_front: 
+      card_image_bottom: 
       pairOfEachPage: 0
     maxRetries: 10
     debugLayer: {fileID: 1630735626}

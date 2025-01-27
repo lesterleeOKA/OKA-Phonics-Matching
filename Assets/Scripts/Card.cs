@@ -46,7 +46,7 @@ public class Card : MonoBehaviour
         get { return this.qid; } 
     }
 
-    public void setCardImage(Sprite cardSprite = null)
+    public void setCardImage(Texture _frontTex = null, Texture _backTex = null)
     {
         // Get or add the EventTrigger component
         this.textCg = this.qaText?.GetComponent<CanvasGroup>();
@@ -54,13 +54,14 @@ public class Card : MonoBehaviour
         this.audioCg = this.qaAudio?.GetComponent<CanvasGroup>();
 
         this.setElements(false);
-        if (this.cardImage != null && cardSprite != null)
+        if (this.cardImage != null && _frontTex != null && _backTex != null)
         {
             var cardImg = this.cardImage.GetComponent<Image>();
 
             if (cardImg != null)
             {
-                cardImg.sprite = cardSprite;
+                cardImg.material.SetTexture("_FrontTex", _backTex);
+                cardImg.material.SetTexture("_BackTex", _frontTex);
             }
         }
         this.AddPointerClickEvent(OnCardClicked);

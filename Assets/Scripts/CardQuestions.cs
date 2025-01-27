@@ -151,7 +151,6 @@ public class CardQuestions : MonoBehaviour
         }
 
         cardManager.ShuffleGridElements(numberOfQuestions);
-        cardManager.ResetAllCards(delayResetCards);
 
     }
 

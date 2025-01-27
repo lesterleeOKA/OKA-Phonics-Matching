@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   qid: 
+  isDone: 0
   question:
     id: 0
     qid: 
