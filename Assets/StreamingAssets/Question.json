@@ -601,6 +601,126 @@
       "correctAnswer": "Head"
     },
     {
+      "qid": "p1u10-c1",
+      "questionType": "picture",
+      "question": "sing",
+      "correctAnswer": "sing"
+    },
+    {
+      "qid": "p1u10-c2",
+      "questionType": "picture",
+      "question": "cry",
+      "correctAnswer": "cry"
+    },
+    {
+      "qid": "p1u10-c3",
+      "questionType": "picture",
+      "question": "read",
+      "correctAnswer": "read"
+    },
+    {
+      "qid": "p1u10-c4",
+      "questionType": "picture",
+      "question": "sleep",
+      "correctAnswer": "sleep"
+    },
+    {
+      "qid": "p1u10-c5",
+      "questionType": "picture",
+      "question": "fly",
+      "correctAnswer": "fly"
+    },
+    {
+      "qid": "p1u10-c6",
+      "questionType": "picture",
+      "question": "laugh",
+      "correctAnswer": "laugh"
+    },
+    {
+      "qid": "p1u10-c7",
+      "questionType": "picture",
+      "question": "play",
+      "correctAnswer": "play"
+    },
+    {
+      "qid": "p1u10-c8",
+      "questionType": "picture",
+      "question": "jump",
+      "correctAnswer": "jump"
+    },
+    {
+      "qid": "p1u10-c9",
+      "questionType": "picture",
+      "question": "run",
+      "correctAnswer": "run"
+    },
+    {
+      "qid": "p1u10-c10",
+      "questionType": "picture",
+      "question": "swim",
+      "correctAnswer": "swim"
+    },
+    {
+      "qid": "p1u10-c11",
+      "questionType": "picture",
+      "question": "hug",
+      "correctAnswer": "hug"
+    },
+    {
+      "qid": "p1u10-c12",
+      "questionType": "picture",
+      "question": "draw",
+      "correctAnswer": "draw"
+    },
+    {
+      "qid": "p1u10-c13",
+      "questionType": "picture",
+      "question": "catch",
+      "correctAnswer": "catch"
+    },
+    {
+      "qid": "p1u10-c14",
+      "questionType": "picture",
+      "question": "drink",
+      "correctAnswer": "drink"
+    },
+    {
+      "qid": "p1u10-c15",
+      "questionType": "picture",
+      "question": "talk",
+      "correctAnswer": "talk"
+    },
+    {
+      "qid": "p1u10-c16",
+      "questionType": "picture",
+      "question": "stand",
+      "correctAnswer": "stand"
+    },
+    {
+      "qid": "p1u10-c17",
+      "questionType": "picture",
+      "question": "walk",
+      "correctAnswer": "walk"
+    },
+    {
+      "qid": "p1u10-c18",
+      "questionType": "picture",
+      "question": "climb",
+      "correctAnswer": "climb"
+    },
+    {
+      "qid": "p1u10-c19",
+      "questionType": "picture",
+      "question": "eat",
+      "correctAnswer": "eat"
+    },
+    {
+      "qid": "p1u10-c20",
+      "questionType": "picture",
+      "question": "feed",
+      "correctAnswer": "feed"
+    },
+    {
       "qid": "p2u3-b1",
       "questionType": "picture",
       "question": "hall",

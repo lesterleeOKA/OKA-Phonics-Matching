@@ -414,7 +414,7 @@ MonoBehaviour:
     card_image_front: {fileID: 0}
     card_image_bottom: {fileID: 0}
     instructions: {fileID: 0}
-    gameTime: 0
+    gameTime: 300
     timeToViewCards: 15
     retry_times: 3
     showFPS: 0
