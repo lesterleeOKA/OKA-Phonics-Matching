@@ -97,7 +97,6 @@ public class APIManager
     {
         ExternalCaller.UpdateLoadBarStatus("Loading Data");
         getParseURLParams?.Invoke();
-
         if (!string.IsNullOrEmpty(this.appId) && !string.IsNullOrEmpty(this.jwt))
         {
             this.IsLogined = true;

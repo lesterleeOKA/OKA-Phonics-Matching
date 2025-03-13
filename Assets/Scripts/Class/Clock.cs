@@ -25,6 +25,7 @@ public class Clock : MonoBehaviour
     public float duration = 15f;
     public float currentTime = 0f;
     private bool isRunning = false;
+    public CanvasGroup prepareBoard;
     public bool IsRunning
     {
         set { this.isRunning = value; }
@@ -36,6 +37,7 @@ public class Clock : MonoBehaviour
     {
         LogController.Instance?.debug("Open Cards OnEnable!!!!!!!!!!!!!!!!!!!!!");
         this.Init();
+        SetUI.Set(this.prepareBoard, true, 0.5f, 0f);
         SetUI.Set(this.canvasGroup, true, 0.5f, 0f, () =>
         {
             this.IsRunning = true;
@@ -45,6 +47,7 @@ public class Clock : MonoBehaviour
     void OnDisable()
     {
         LogController.Instance?.debug("Open Cards Disable !!!!!!!!!!!!!!!!!!!!!");
+        SetUI.Set(this.prepareBoard, false, 0.5f, 0f);
         SetUI.Set(this.canvasGroup, false, 0.5f, 0f, ()=>
         {
             this.Init();
@@ -106,8 +109,14 @@ public class Clock : MonoBehaviour
 
     private void UpdateTimerText()
     {
-        if(this.timer != null) 
-            this.timer.text = Mathf.FloorToInt(this.currentTime).ToString();
+        int currentTime = Mathf.FloorToInt(this.currentTime);
+        string prepareText = $"Please look at the cards below and remember their positions. The cards will be flipped after {currentTime} seconds.";
+
+        if(this.prepareBoard != null)
+           this.prepareBoard.GetComponentInChildren<TextMeshProUGUI>().text = prepareText;
+
+        if (this.timer != null) 
+            this.timer.text = currentTime.ToString();
     }
 
     public void StopAlarmAnimation()

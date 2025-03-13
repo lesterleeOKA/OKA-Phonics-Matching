@@ -185,7 +185,7 @@ public class GameController : GameBaseController
             this.PrepareNextQuestion();
         }
 
-       LogController.Instance?.debug("selected cards:" + this.cardManager.flickedCardNumber);
+       //LogController.Instance?.debug("selected cards:" + this.cardManager.flickedCardNumber);
 
         if(this.playerControllers.Count > 0 && this.gameStatus == GameStatus.ready)
         {
