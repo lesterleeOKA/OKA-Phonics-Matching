@@ -71,8 +71,8 @@ public static class ExternalCaller
     public static void HiddenLoadingBar()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        Application.ExternalEval("hiddenLoadingBar()"); 
-        Application.ExternalEval("replaceUrlPart()");   
+        Application.ExternalEval("hiddenLoadingBar()");  
+                /*Application.ExternalEval("replaceUrlPart()");*/
 #endif
     }
 
