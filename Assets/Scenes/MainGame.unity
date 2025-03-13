@@ -1098,6 +1098,10 @@ PrefabInstance:
       value: AudioControl, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7803376463082849453, guid: 7ba011c84fc08a84abef90e735bb5d56, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7803376463082849453, guid: 7ba011c84fc08a84abef90e735bb5d56, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
